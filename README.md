@@ -2,7 +2,7 @@
 
 ## Project Name
 
-*Replace with the name of your API project.*
+**Steam Games API**
 
 ## Objective
 
@@ -11,6 +11,13 @@ Design and develop a robust, well-documented API (REST or GraphQL) that allows u
 Choose a dataset (10000+ data points) that interests you — it should include at least one primary CRUD resource and two additional read-only resources. Sources like [Kaggle](https://www.kaggle.com/datasets), public APIs, or CSV files work well. Pick something you find interesting, as you will reuse this API in the next assignment (WT dashboard).
 
 *Describe your API in a few sentences: what dataset does it serve, what are its main resources, and what can users do with it?*
+- The dataset contains the games from the gaming platform Steam, the largest platform for PC.
+- The main resource is Games, authenticated users can use CRUD operations. 
+- The second and third resources are Developers & Genres, those resources are only read-only (GET) and doesn't require authentication.
+1. Download the dataset:
+- https://www.kaggle.com/datasets/fronkongames/steam-games-dataset 
+- Download `games.csv`
+- Place it in `data/games.csv`
 
 ## Implementation Type
 
@@ -40,10 +47,10 @@ Choose a dataset (10000+ data points) that interests you — it should include a
 
 | Field | Description |
 |---|---|
-| **Dataset source** | *e.g. Kaggle, public API, CSV, etc.* |
-| **Primary resource (CRUD)** | *e.g. Movies (id, title, release_year, genre, description)* |
-| **Secondary resource 1 (read-only)** | *e.g. Actors (id, name, movies_played)* |
-| **Secondary resource 2 (read-only)** | *e.g. Ratings (id, text, movie)* |
+| **Dataset source** | Kaggle - Steam Games Dataset |
+| **Primary resource (CRUD)** | Games (id, name, price, developer, genre, rating, release_date) |
+| **Secondary resource 1 (read-only)** | Developers (id, name, games_count) |
+| **Secondary resource 2 (read-only)** | Genres (id, name, games_count) |
 
 
 ## Design Decisions
