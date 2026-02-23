@@ -53,7 +53,7 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
     print(f"Loading {len(df)} games into the database...")
     games_loaded = 0
 
-    for idx, row in df.iterrows():
+    for _, row in df.iterrows():
 
         game = Game(
             app_id=str(row["app_id"]) if pd.notna(row["app_id"]) else "",
@@ -82,19 +82,19 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
         )
 
         if pd.notna(row.get("Developers")):
-            dev_names = [d.strip() for d in str(row["Developers"]).split(",")]
+            dev_names = list(set([d.strip() for d in str(row["Developers"]).split(",")]))
             for dev_name in dev_names:
                 if dev_name in dev_map:
                     dev = db.query(Developer).filter(Developer.id == dev_map[dev_name]).first()
-                    if dev:
+                    if dev and dev not in game.developers:
                         game.developers.append(dev)
 
         if pd.notna(row.get("Genres")):
-            genre_names = [g.strip() for g in str(row["Genres"]).split(",")]
+            genre_names = list(set([g.strip() for g in str(row["Genres"]).split(",")]))
             for genre_name in genre_names:
                 if genre_name in genre_map:
                     genre = db.query(Genre).filter(Genre.id == genre_map[genre_name]).first()
-                    if genre:
+                    if genre and genre not in game.genres:
                         game.genres.append(genre)
 
         db.add(game)

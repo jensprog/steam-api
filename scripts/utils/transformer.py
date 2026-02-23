@@ -6,6 +6,9 @@ import pandas as pd
 def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
     print("Transforming data...")
 
+    if "AppID" not in df.columns:
+        df = df.reset_index()
+
     initial_count = len(df)
     df = df.dropna(subset=["Developers", "Genres", "Name"])
     print(f"Dropped {initial_count - len(df)} rows with missing critical data.")
