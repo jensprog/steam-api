@@ -10,11 +10,12 @@ def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
     df = df.dropna(subset=["Developers", "Genres", "Name"])
     print(f"Dropped {initial_count - len(df)} rows with missing critical data.")
 
+    print(df[["AppID", "Name", "Release date"]].head(1))
     df = df.rename(
         columns={
             "AppID": "app_id",
             "Name": "name",
-            "ReleaseDate": "release_date",
+            "Release date": "release_date",
             "Price": "price",
             "Estimated owners": "estimated_owners",
             "Metacritic score": "metacritic_score",
@@ -28,6 +29,8 @@ def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
             "About the game": "short_description",
         }
     )
+    print(df[["app_id", "name", "release_date"]].head(1))
+    print(df[["Developers", "Genres"]].head(3))
 
     if df["price"].max() > 1000:  # Assuming price is in cents if max is very high
         df["price"] = df["price"] / 100.0
@@ -43,7 +46,7 @@ def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
 def extract_developers(df: pd.DataFrame) -> set:
     developers = set()
     for devs_str in df["Developers"].dropna():
-        devs = [d.strip() for d in devs_str.split(",")]
+        devs = [d.strip() for d in str(devs_str).split(",")]
         developers.update(devs)
 
     print(f"Found {len(developers)} unique developers")
@@ -56,7 +59,7 @@ def extract_developers(df: pd.DataFrame) -> set:
 def extract_genres(df: pd.DataFrame) -> set:
     genres = set()
     for genres_str in df["Genres"].dropna():
-        gens = [g.strip() for g in genres_str.split(",")]
+        gens = [g.strip() for g in str(genres_str).split(",")]
         genres.update(gens)
 
     print(f"Found {len(genres)} unique genres")

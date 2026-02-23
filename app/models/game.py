@@ -3,21 +3,22 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 game_developers = Table(
-    'game_developers',
+    "game_developers",
     Base.metadata,
-    Column('game_id', Integer, ForeignKey('games.id'), primary_key=True),
-    Column('developer_id', Integer, ForeignKey('developers.id'), primary_key=True)
+    Column("game_id", Integer, ForeignKey("games.id"), primary_key=True),
+    Column("developer_id", Integer, ForeignKey("developers.id"), primary_key=True),
 )
 
 game_genres = Table(
-    'game_genres',
+    "game_genres",
     Base.metadata,
-    Column('game_id', Integer, ForeignKey('games.id'), primary_key=True),
-    Column('genre_id', Integer, ForeignKey('genres.id'), primary_key=True)
+    Column("game_id", Integer, ForeignKey("games.id"), primary_key=True),
+    Column("genre_id", Integer, ForeignKey("genres.id"), primary_key=True),
 )
 
+
 class Game(Base):
-    __tablename__ = 'games'
+    __tablename__ = "games"
 
     id = Column(Integer, primary_key=True, index=True)
     app_id = Column(Integer, unique=True, index=True)
@@ -35,5 +36,5 @@ class Game(Base):
     estimated_owners = Column(String)
     header_image = Column(String)
 
-    developers = relationship('Developer', secondary=game_developers, back_populates='games')
-    genres = relationship('Genre', secondary=game_genres, back_populates='games')
+    developers = relationship("Developer", secondary=game_developers, back_populates="games")
+    genres = relationship("Genre", secondary=game_genres, back_populates="games")

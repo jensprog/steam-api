@@ -9,6 +9,6 @@ def extract_games(csv_path: str, nrows: int | None = None) -> pd.DataFrame:
         raise FileNotFoundError(f"CSV file not found: {path}")
 
     print(f"Extracting data from {path}...")
-    df = pd.read_csv(path, nrows=nrows)
+    df = pd.read_csv(path, nrows=nrows, index_col=False, quotechar='"')
     print(f"Extracted {len(df)} rows.")
     return df
