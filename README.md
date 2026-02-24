@@ -24,42 +24,76 @@ You will need to have an account on kaggle.com to download datasets.
 
 1. Create a Kaggle account at [kaggle.com](https://kaggle.com)
 2. Go to Account -> Create new API Token to download `kaggle.json`
-3. Place `kaggle.json` in the appropriate location:
-
-- **Linux/Mac**: `~/.kaggle/kaggle.json`
-- **Windows**: `C:\Users\<username>\.kaggle\kaggle.json`
 
 ### Installation & Download
 
 **Linux/Ubuntu:**
 
 ```bash
+sudo apt update
 sudo apt install pipx
 pipx ensurepath
+source ~/.bashrc
 pipx install kaggle
-kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 ```
 
 **macOS:**
 
 ```bash
-bre install pipx
+brew install pipx
 pipx ensurepath
+source ~/.zshrc
 pipx install kaggle
-kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 ```
 
 **Windows:**
 
-```bash
+```powershell
 pip install kaggle
+```
+
+### Configure Kaggle API Credentials
+
+After downloading kaggle.json, move it to the correct location:
+**Linux/MacOS**:
+
+```bash
+mkdir -p ~/.kaggle
+mv ~/Downloads/kaggle.json ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json
+```
+
+**Windows**:
+
+```powershell
+mkdir $HOME\.kaggle
+move $HOME\Downloads\kaggle.json $HOME\.kaggle\
+```
+
+### Verify Kaggle CLI setup
+
+```bash
+kaggle datasets list
+```
+
+### Download Dataset
+
+```bash
 kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 ```
+
+This will download:
+
+- `data/games.csv`
+- `data/games.json`
+
+### Recommended File
+
+My recommendation is to use the games.json file instead of the csv file. Json file is more reliable and has a better structure.
 
 ### Alternative installation & download
 
 You can also download manually from the Kaggle website and extract to the data/ folder.
-My recommendation is to use the games.json file instead of the csv file. Json file is more reliable and has a better structure.
 
 ## Database Setup
 
