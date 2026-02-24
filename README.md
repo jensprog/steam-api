@@ -29,6 +29,8 @@ pipx install kaggle
 kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 ```
 
+2. Move the games.json-file to the data/ folder.
+
 You can also download the games.csv-file, but I would recommend the json-file for reliability and better data structure.
 
 ## Implementation Type
