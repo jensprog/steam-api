@@ -52,6 +52,8 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
     """Load games to database, linking to developers and genres."""
     print(f"Loading {len(df)} games into the database...")
     games_loaded = 0
+    total_dev_links = 0
+    total_genre_links = 0
 
     for _, row in df.iterrows():
 
@@ -81,22 +83,40 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
             short_description=str(row.get("short_description", "")),
         )
 
-        if pd.notna(row.get("Developers")):
-            dev_names = list(set([d.strip() for d in str(row["Developers"]).split(",")]))
-            for dev_name in dev_names:
-                if dev_name in dev_map:
-                    dev = db.query(Developer).filter(Developer.id == dev_map[dev_name]).first()
+        developers_data = row.get("developers")
+        print(f"\nDEBUG Game '{game.name}':")
+        print(f"  developers_data type: {type(developers_data)}")
+        print(f" developers_data value: {developers_data}")
+        if (
+            developers_data is not None
+            and isinstance(developers_data, list)
+            and len(developers_data) > 0
+        ):
+            for dev_name in developers_data:
+                print(f"  Looking for developer: '{dev_name}' (stripped: '{dev_name.strip()}')")
+                print(f"  Is in dev_map? {dev_name.strip() in dev_map}")
+                if dev_name and dev_name.strip() in dev_map:
+                    dev = (
+                        db.query(Developer)
+                        .filter(Developer.id == dev_map[dev_name.strip()])
+                        .first()
+                    )
+                    print(f"  Found developer in DB: {dev}")
                     if dev and dev not in game.developers:
                         game.developers.append(dev)
+                        total_dev_links += 1
+                        print(f" Appended developer to game '{game.name}'")
 
-        if pd.notna(row.get("Genres")):
-            genre_names = list(set([g.strip() for g in str(row["Genres"]).split(",")]))
-            for genre_name in genre_names:
-                if genre_name in genre_map:
-                    genre = db.query(Genre).filter(Genre.id == genre_map[genre_name]).first()
+        genres_data = row.get("genres")
+        if genres_data is not None and isinstance(genres_data, list) and len(genres_data) > 0:
+            for genre_name in genres_data:
+                if genre_name and genre_name.strip() in genre_map:
+                    genre = (
+                        db.query(Genre).filter(Genre.id == genre_map[genre_name.strip()]).first()
+                    )
                     if genre and genre not in game.genres:
                         game.genres.append(genre)
-
+                        total_genre_links += 1
         db.add(game)
         games_loaded += 1
 
@@ -106,3 +126,5 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
 
     db.commit()
     print(f"✅ Loaded all {games_loaded} games successfully!")
+    print(f"Total developer links: {total_dev_links}")
+    print(f"Total genre links: {total_genre_links}")
