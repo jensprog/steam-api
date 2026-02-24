@@ -1,21 +1,20 @@
-from app.database import SessionLocal, engine, Base
-from scripts.utils.loader import load_developers, load_genres, load_games
-from scripts.utils.transformer import (
-    transform_games,
-    extract_developers,
-    extract_genres,
-)
-from scripts.utils.extractor import extract_games
 import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
-
+from app.database import SessionLocal, engine, Base  # noqa: E402
+from scripts.utils.loader import load_developers, load_genres, load_games  # noqa: E402
+from scripts.utils.transformer import (  # noqa: E402
+    transform_games,
+    extract_developers,
+    extract_genres,
+)
+from scripts.utils.extractor import extract_games_json  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 
-df = extract_games("data/games.csv", nrows=100)
-df_clean = transform_games(df, max_games=50)
+df = extract_games_json("data/games.json")
+df_clean = transform_games(df, max_games=10)
 developers = extract_developers(df_clean)
 genres = extract_genres(df_clean)
 
