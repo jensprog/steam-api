@@ -17,7 +17,8 @@ _Describe your API in a few sentences: what dataset does it serve, what are its 
 - The second and third resources are Developers & Genres, those resources are only read-only (GET) and doesn't require authentication.
 
 **Download the dataset from [kaggle](https://www.kaggle.com/datasets/fronkongames/steam-games-dataset)**
-You will need to have an account on kaggle.com to download datasets.
+
+- You will need to have an account on kaggle.com to download datasets.
 
 1. How I downloaded the games.json file(Linux OS):
 
