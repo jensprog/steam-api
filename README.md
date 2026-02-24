@@ -18,9 +18,20 @@ _Describe your API in a few sentences: what dataset does it serve, what are its 
 
 **Download the dataset from [kaggle](https://www.kaggle.com/datasets/fronkongames/steam-games-dataset)**
 
-- You will need to have an account on kaggle.com to download datasets.
+You will need to have an account on kaggle.com to download datasets.
 
-1. How I downloaded the games.json file(Linux OS):
+### Prerequisites
+
+1. Create a Kaggle account at [kaggle.com](https://kaggle.com)
+2. Go to Account -> Create new API Token to download `kaggle.json`
+3. Place `kaggle.json` in the appropriate location:
+
+- **Linux/Mac**: `~/.kaggle/kaggle.json`
+- **Windows**: `C:\Users\<username>\.kaggle\kaggle.json`
+
+### Installation & Download
+
+**Linux/Ubuntu:**
 
 ```bash
 sudo apt install pipx
@@ -29,9 +40,26 @@ pipx install kaggle
 kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 ```
 
-2. Move the games.json-file to the data/ folder.
+**macOS:**
 
-You can also download the games.csv-file, but I would recommend the json-file for reliability and better data structure.
+```bash
+bre install pipx
+pipx ensurepath
+pipx install kaggle
+kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
+```
+
+**Windows:**
+
+```bash
+pip install kaggle
+kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
+```
+
+### Alternative installation & download
+
+You can also download manually from the Kaggle website and extract to the data/ folder.
+My recommendation is to use the games.json file instead of the csv file. Json file is more reliable and has a better structure.
 
 ## Database Setup
 
