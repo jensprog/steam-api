@@ -33,6 +33,48 @@ kaggle datasets download fronkongames/steam-games-dataset -p data/ --unzip
 
 You can also download the games.csv-file, but I would recommend the json-file for reliability and better data structure.
 
+## Database Setup
+
+### Running the Seed Script
+
+To populate the database with sample data:
+
+```bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Run the seed script
+python scripts/seed.py
+```
+
+This will load 15.000 games with their associated developers and genres from the Steam games dataset.
+
+To clear the database before re-seeding:
+
+```bash
+  python -c "
+  import sys
+  from pathlib import Path
+  sys.path.append(str(Path.cwd()))
+  from app.database import SessionLocal
+  from sqlalchemy import text
+
+  db = SessionLocal()
+  try:
+      db.execute(text('DELETE FROM game_developers'))
+      db.execute(text('DELETE FROM game_genres'))
+      db.execute(text('DELETE FROM games'))
+      db.execute(text('DELETE FROM developers'))
+      db.execute(text('DELETE FROM genres'))
+      db.commit()
+      print('✅ Database cleared')
+  except Exception as e:
+      db.rollback()
+  finally:
+      db.close()
+  "
+```
+
 ## Implementation Type
 
 _Specify: REST or GraphQL_
@@ -136,7 +178,7 @@ See [all requirements in Issues](../../issues/). Close issues as you implement t
 | API documentation (Swagger/OpenAPI or Postman)              | [#6](../../issues/6)   | :white_large_square: |
 | Automated Postman tests (20+ test cases, success + failure) | [#7](../../issues/7)   | :white_large_square: |
 | CI/CD pipeline running tests on every commit/MR             | [#8](../../issues/8)   | :white_large_square: |
-| Seed script for sample data                                 | [#5](../../issues/5)   | :white_large_square: |
+| Seed script for sample data                                 | [#5](../../issues/5)   | :white_check_mark:   |
 | Code quality (consistent standard, modular, documented)     | [#10](../../issues/10) | :white_large_square: |
 | Deployed and publicly accessible                            | [#9](../../issues/9)   | :white_large_square: |
 | Peer review reflection submitted on merge request           | [#11](../../issues/11) | :white_large_square: |
