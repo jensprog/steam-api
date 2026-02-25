@@ -10,9 +10,6 @@ def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
     df = df.dropna(subset=["developers", "genres", "name"])
     print(f"Dropped {initial_count - len(df)} rows with missing critical data.")
 
-    print(df[["app_id", "name", "release_date"]].head(1))
-    print(df[["developers", "genres"]].head(3))
-
     if df["price"].max() > 1000:  # Assuming price is in cents if max is very high
         df["price"] = df["price"] / 100.0
 

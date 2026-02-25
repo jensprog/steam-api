@@ -113,25 +113,17 @@ def _link_developers_to_game(db: Session, game: Game, row, dev_map: Dict[str, in
     dev_links_created = 0
     developers_data = row.get("developers")
 
-    print(f"\nDEBUG Game '{game.name}':")
-    print(f"  developers_data type: {type(developers_data)}")
-    print(f" developers_data value: {developers_data}")
-
     if (
         developers_data is not None
         and isinstance(developers_data, list)
         and len(developers_data) > 0
     ):
         for dev_name in developers_data:
-            print(f"  Looking for developer: '{dev_name}' (stripped: '{dev_name.strip()}')")
-            print(f"  Is in dev_map? {dev_name.strip() in dev_map}")
             if dev_name and dev_name.strip() in dev_map:
                 dev = db.query(Developer).filter(Developer.id == dev_map[dev_name.strip()]).first()
-                print(f"  Found developer in DB: {dev}")
                 if dev and dev not in game.developers:
                     game.developers.append(dev)
                     dev_links_created += 1
-                    print(f" Appended developer to game '{game.name}'")
 
     return dev_links_created
 
