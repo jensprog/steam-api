@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from scripts.utils.extractor import extract_games
-from scripts.utils.transformer import (
+from src.utils.extractor import extract_games_json
+from src.utils.transformer import (
     transform_games,
     extract_developers,
     extract_genres,
@@ -9,7 +9,7 @@ from scripts.utils.transformer import (
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-df = extract_games("data/games.csv", nrows=1000)
+df = extract_games_json("data/games.json")
 
 df_clean = transform_games(df, max_games=500)
 developers = extract_developers(df_clean)

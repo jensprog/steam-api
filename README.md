@@ -114,27 +114,7 @@ This will load 15.000 games with their associated developers and genres from the
 To clear the database before re-seeding:
 
 ```bash
-  python -c "
-  import sys
-  from pathlib import Path
-  sys.path.append(str(Path.cwd()))
-  from app.database import SessionLocal
-  from sqlalchemy import text
-
-  db = SessionLocal()
-  try:
-      db.execute(text('DELETE FROM game_developers'))
-      db.execute(text('DELETE FROM game_genres'))
-      db.execute(text('DELETE FROM games'))
-      db.execute(text('DELETE FROM developers'))
-      db.execute(text('DELETE FROM genres'))
-      db.commit()
-      print('✅ Database cleared')
-  except Exception as e:
-      db.rollback()
-  finally:
-      db.close()
-  "
+python app/clearDatabase.py
 ```
 
 ## Implementation Type

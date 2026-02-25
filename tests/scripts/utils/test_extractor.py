@@ -1,11 +1,11 @@
 import sys
 from pathlib import Path
-from scripts.utils.extractor import extract_games
+from src.utils.extractor import extract_games_json
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
 
-df = extract_games("data/games.csv", nrows=100)
+df = extract_games_json("data/games.json")
 
 
 print(f"\n✅ Successfully extracted {len(df)} rows")
