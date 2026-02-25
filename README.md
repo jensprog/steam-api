@@ -2,7 +2,7 @@
 
 ## Project Name
 
-**Steam Games API**
+**Steam Games Archive API**
 
 ## Objective
 
@@ -106,7 +106,7 @@ To populate the database with sample data:
 source venv/bin/activate
 
 # Run the seed script
-python scripts/seed.py
+python app/seed/steamgames.py
 ```
 
 This will load 15.000 games with their associated developers and genres from the Steam games dataset.

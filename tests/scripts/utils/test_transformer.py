@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from src.utils.extractor import extract_games_json
-from src.utils.transformer import (
+from src.extractor import extract_games_json
+from src.transformer import (
     transform_games,
     extract_developers,
     extract_genres,

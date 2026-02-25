@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from src.utils.extractor import extract_games_json
+from src.extractor import extract_games_json
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 

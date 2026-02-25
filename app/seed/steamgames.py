@@ -1,10 +1,10 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent))
-from src.utils.extractor import extract_games_json  # noqa: E402
-from src.utils.loader import load_developers, load_games, load_genres  # noqa: E402
-from src.utils.transformer import (  # noqa: E402
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from src.extractor import extract_games_json  # noqa: E402
+from src.loader import load_developers, load_games, load_genres  # noqa: E402
+from src.transformer import (  # noqa: E402
     transform_games,
     extract_developers,
     extract_genres,

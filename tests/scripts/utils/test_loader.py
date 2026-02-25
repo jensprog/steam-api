@@ -3,13 +3,13 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 from app.database import SessionLocal, engine, Base  # noqa: E402
-from src.utils.loader import load_developers, load_genres, load_games  # noqa: E402
-from src.utils.transformer import (  # noqa: E402
+from src.loader import load_developers, load_genres, load_games  # noqa: E402
+from src.transformer import (  # noqa: E402
     transform_games,
     extract_developers,
     extract_genres,
 )
-from src.utils.extractor import extract_games_json  # noqa: E402
+from src.extractor import extract_games_json  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 
