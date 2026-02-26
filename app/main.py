@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from app.database import engine, Base
-from app.models import Game, Developer, Genre
+from app.routers import game
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Steam Games API", version="1.0.0")
+
+app.include_router(game.router, prefix="/games")
 
 
 @app.get("/")
