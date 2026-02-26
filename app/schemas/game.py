@@ -29,6 +29,12 @@ class GameResponse(BaseModel):
     metacritic_score: int
     positive: int
     negative: int
+    windows: bool
+    mac: bool
+    linux: bool
+    average_playtime_forever: int
+    estimated_owners: Optional[str] = None
+    header_image: Optional[str] = None
 
     developers: List[str] = []
     genres: List[str] = []
