@@ -13,9 +13,22 @@ class GenreResponse(BaseModel):
         from_attributes = True
 
 
+""" JSON structure for GET /games endpoint with pagination"""
+
+
+class PaginationResponse(BaseModel):
+    page: int
+    limit: int
+    total: int
+    pages: int
+    has_next: bool
+    has_previous: bool
+
+
 """ JSON structure for GET /genres endpoint"""
 
 
 class GenresListResponse(BaseModel):
     genres: List[GenreResponse]
+    pagination: PaginationResponse
     links: dict = {}

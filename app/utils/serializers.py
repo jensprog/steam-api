@@ -1,6 +1,8 @@
 from app.models.developer import Developer
 from app.models.game import Game
+from app.models.genre import Genre
 from app.schemas import GameResponse, DeveloperResponse
+from app.schemas.genre import GenreResponse
 
 """ Utility functions for serializing database models into API response schemas """
 
@@ -45,3 +47,15 @@ def serialize_developer(developer: Developer) -> DeveloperResponse:
     }
 
     return DeveloperResponse(**developer_dict)
+
+
+def serialize_genres(genres: Genre) -> GenreResponse:
+    genre_dict = {
+        "id": genres.id,
+        "name": genres.name,
+        "links": [
+            {"rel": "self", "href": f"/genres/{genres.id}", "method": "GET"},
+        ],
+    }
+
+    return GenreResponse(**genre_dict)

@@ -13,6 +13,9 @@ class DeveloperResponse(BaseModel):
         from_attributes = True
 
 
+""" JSON structure for GET /games endpoint with pagination"""
+
+
 class PaginationResponse(BaseModel):
     page: int
     limit: int
