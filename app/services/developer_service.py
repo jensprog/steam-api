@@ -1,9 +1,39 @@
 from sqlalchemy.orm import Session
 from app.models.developer import Developer
 from app.schemas import DeveloperResponse
+from app.schemas.developer import DevelopersListResponse, PaginationResponse
 from app.utils.serializers import serialize_developer
 
 
-def get_developers_list(db: Session) -> list[DeveloperResponse]:
-    developers = db.query(Developer).all()
-    return [serialize_developer(dev) for dev in developers]
+def get_developers_list(db: Session, page: int = 1, limit: int = 20) -> DevelopersListResponse:
+    developers = db.query(Developer).limit(limit).offset((page - 1) * limit).all()
+    total_developers = db.query(Developer).count()
+
+    developer_responses = [serialize_developer(developer) for developer in developers]
+
+    pages = (total_developers + limit - 1) // limit
+    pagination = PaginationResponse(
+        page=page,
+        limit=limit,
+        total=total_developers,
+        pages=pages,
+        has_next=page < pages,
+        has_previous=page > 1,
+    )
+
+    links = {"self": f"/developers?page={page}&limit={limit}"}
+    if pagination.has_next:
+        links["next"] = f"/developers?page={page + 1}&limit={limit}"
+    if pagination.has_previous:
+        links["previous"] = f"/developers?page={page - 1}&limit={limit}"
+
+    return DevelopersListResponse(
+        developers=developer_responses, pagination=pagination, links=links
+    )
+
+
+def get_developer_by_id(db: Session, developer_id: int) -> DeveloperResponse | None:
+    developer = db.query(Developer).filter(Developer.id == developer_id).first()
+    if not developer:
+        return None
+    return serialize_developer(developer)

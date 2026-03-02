@@ -13,9 +13,19 @@ class DeveloperResponse(BaseModel):
         from_attributes = True
 
 
+class PaginationResponse(BaseModel):
+    page: int
+    limit: int
+    total: int
+    pages: int
+    has_next: bool
+    has_previous: bool
+
+
 """ JSON structure for GET /developers endpoint"""
 
 
 class DevelopersListResponse(BaseModel):
     developers: List[DeveloperResponse]
+    pagination: PaginationResponse
     links: dict = {}
