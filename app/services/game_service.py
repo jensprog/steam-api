@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
-from app.schemas.game import GameResponse
+from app.schemas.game import GameCreate, GameResponse
 from app.utils.serializers import serialize_game
 
 
@@ -35,3 +35,11 @@ def get_game_by_id(db: Session, game_id: int) -> GameResponse | None:
     if not game:
         return None
     return serialize_game(game)
+
+
+def create_game(db: Session, game_data: GameCreate) -> GameResponse:
+    new_game = Game(**game_data.model_dump())
+    db.add(new_game)
+    db.commit()
+    db.refresh(new_game)
+    return serialize_game(new_game)
