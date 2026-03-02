@@ -75,3 +75,19 @@ class GamesListResponse(BaseModel):
     games: List[GameResponse]
     pagination: PaginationResponse
     links: dict
+
+
+""" JSON structure for PUT /games/{id} endpoint"""
+
+
+class GameUpdate(BaseModel):
+    name: Optional[str] = None
+    price: Optional[float] = None
+    release_date: Optional[str] = None
+    short_description: Optional[str] = None
+    windows: Optional[bool] = None
+    mac: Optional[bool] = None
+    linux: Optional[bool] = None
+    metacritic_score: Optional[int] = None
+    positive: Optional[int] = None
+    negative: Optional[int] = None

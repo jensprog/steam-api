@@ -1,6 +1,7 @@
 from .game import (
     GameCreate,
     GameResponse,
+    GameUpdate,
     GamesListResponse,
     PaginationResponse,
     GameQueryParameters,
@@ -12,6 +13,7 @@ from .auth import UserRegister, UserLogin, TokenResponse
 __all__ = [
     "GameCreate",
     "GameResponse",
+    "GameUpdate",
     "GamesListResponse",
     "PaginationResponse",
     "GameQueryParameters",
