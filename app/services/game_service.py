@@ -56,3 +56,13 @@ def update_game(db: Session, game_id: int, game_data: GameUpdate) -> GameRespons
     db.commit()
     db.refresh(game)
     return serialize_game(game)
+
+
+def delete_game(db: Session, game_id: int) -> bool:
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        return False
+
+    db.delete(game)
+    db.commit()
+    return True
