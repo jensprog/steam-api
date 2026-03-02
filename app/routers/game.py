@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import GamesListResponse
-from app.services.game_service import get_games_list
+from app.schemas import GamesListResponse, GameResponse
+from app.services.game_service import get_game_by_id, get_games_list
 
 """ Router for game-related endpoints """
 
@@ -16,3 +16,11 @@ def get_games(
     db: Session = Depends(get_db),
 ) -> GamesListResponse:
     return get_games_list(db, page=page, limit=limit)
+
+
+@router.get("/{id}", response_model=GameResponse)
+def get_game(id: int, db: Session = Depends(get_db)) -> GameResponse:
+    game = get_game_by_id(db, id)
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+    return game

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
+from app.schemas.game import GameResponse
 from app.utils.serializers import serialize_game
 
 
@@ -27,3 +28,10 @@ def get_games_list(db: Session, page: int = 1, limit: int = 20) -> GamesListResp
         links["previous"] = f"/games?page={page - 1}&limit={limit}"
 
     return GamesListResponse(games=game_responses, pagination=pagination, links=links)
+
+
+def get_game_by_id(db: Session, game_id: int) -> GameResponse | None:
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        return None
+    return serialize_game(game)
