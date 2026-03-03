@@ -1,32 +1,34 @@
-from typing import Optional
 from sqlalchemy.orm import Session
 from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
-from app.schemas.game import GameCreate, GameResponse, GameUpdate
+from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game
 from app.utils.hateoasbuilder import build_pagination_links
 
 
-def get_games_list(db: Session, developer: Optional[str] = None, page: int = 1, limit: int = 20) -> GamesListResponse:
+def get_games_list(db: Session, params: GameQueryParameters) -> GamesListResponse:
     query = db.query(Game)
-    if developer:
-        query = query.filter(Game.developers.any(name=developer))
-    games = query.limit(limit).offset((page - 1) * limit).all()
+    if params.developer:
+        query = query.filter(Game.developers.any(name=params.developer))
+    if params.genre:
+        query = query.filter(Game.genres.any(name=params.genre))
+
+    games = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
     total_games = query.count()
 
     game_responses = [serialize_game(game) for game in games]
 
-    pages = (total_games + limit - 1) // limit
+    pages = (total_games + params.limit - 1) // params.limit
     pagination = PaginationResponse(
-        page=page,
-        limit=limit,
+        page=params.page,
+        limit=params.limit,
         total=total_games,
         pages=pages,
-        has_next=page < pages,
-        has_previous=page > 1,
+        has_next=params.page < pages,
+        has_previous=params.page > 1,
     )
 
-    links = build_pagination_links("/games", page, limit, pagination)
+    links = build_pagination_links("/games", params.page, params.limit, pagination)
 
     return GamesListResponse(games=game_responses, pagination=pagination, links=links)
 

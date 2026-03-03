@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import GamesListResponse, GameResponse, GameCreate, GameUpdate
+from app.schemas import GamesListResponse, GameResponse, GameCreate, GameUpdate, GameQueryParameters
 from app.services.game_service import (
     create_game,
     delete_game,
@@ -17,12 +17,10 @@ router = APIRouter(tags=["Games"])
 
 @router.get("/", response_model=GamesListResponse, status_code=200)
 def get_games(
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(20, ge=1, le=1000, description="Number of items per page"),
-    developer: str = Query(None, description="Filter games by developer name"),
+    params: GameQueryParameters = Depends(),
     db: Session = Depends(get_db),
 ) -> GamesListResponse:
-    return get_games_list(db, developer=developer, page=page, limit=limit)
+    return get_games_list(db, params)
 
 
 @router.get("/{id}", response_model=GameResponse, status_code=200)
