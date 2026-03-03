@@ -3,6 +3,7 @@ from app.models.developer import Developer
 from app.schemas import DeveloperResponse
 from app.schemas.developer import DevelopersListResponse, PaginationResponse
 from app.utils.serializers import serialize_developer
+from app.utils.hateoasbuilder import build_pagination_links
 
 
 def get_developers_list(db: Session, page: int = 1, limit: int = 20) -> DevelopersListResponse:
@@ -21,11 +22,7 @@ def get_developers_list(db: Session, page: int = 1, limit: int = 20) -> Develope
         has_previous=page > 1,
     )
 
-    links = {"self": f"/developers?page={page}&limit={limit}"}
-    if pagination.has_next:
-        links["next"] = f"/developers?page={page + 1}&limit={limit}"
-    if pagination.has_previous:
-        links["previous"] = f"/developers?page={page - 1}&limit={limit}"
+    links = build_pagination_links("/developers", page, limit, pagination)
 
     return DevelopersListResponse(
         developers=developer_responses, pagination=pagination, links=links

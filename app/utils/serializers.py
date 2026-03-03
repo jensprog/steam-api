@@ -3,6 +3,7 @@ from app.models.game import Game
 from app.models.genre import Genre
 from app.schemas import GameResponse, DeveloperResponse
 from app.schemas.genre import GenreResponse
+from app.utils.hateoasbuilder import build_resource_links
 
 """ Utility functions for serializing database models into API response schemas """
 
@@ -28,11 +29,7 @@ def serialize_game(game: Game, include_links: bool = True) -> GameResponse:
     }
 
     if include_links:
-        game_dict["links"] = [
-            {"rel": "self", "href": f"/games/{game.id}", "method": "GET"},
-            {"rel": "update", "href": f"/games/{game.id}", "method": "PUT"},
-            {"rel": "delete", "href": f"/games/{game.id}", "method": "DELETE"},
-        ]
+        game_dict["links"] = build_resource_links("games", game.id, include_crud=True)
 
     return GameResponse(**game_dict)
 
@@ -41,9 +38,7 @@ def serialize_developer(developer: Developer) -> DeveloperResponse:
     developer_dict = {
         "id": developer.id,
         "name": developer.name,
-        "links": [
-            {"rel": "self", "href": f"/developers/{developer.id}", "method": "GET"},
-        ],
+        "links": build_resource_links("developers", developer.id, include_crud=False),
     }
 
     return DeveloperResponse(**developer_dict)
@@ -53,9 +48,7 @@ def serialize_genres(genres: Genre) -> GenreResponse:
     genre_dict = {
         "id": genres.id,
         "name": genres.name,
-        "links": [
-            {"rel": "self", "href": f"/genres/{genres.id}", "method": "GET"},
-        ],
+        "links": build_resource_links("genres", genres.id, include_crud=False),
     }
 
     return GenreResponse(**genre_dict)

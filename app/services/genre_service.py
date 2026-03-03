@@ -3,6 +3,7 @@ from app.models.genre import Genre
 from app.schemas import GenreResponse
 from app.schemas.genre import GenresListResponse, PaginationResponse
 from app.utils.serializers import serialize_genres
+from app.utils.hateoasbuilder import build_pagination_links
 
 
 def get_genres_list(db: Session, page: int = 1, limit: int = 20) -> GenresListResponse:
@@ -21,11 +22,7 @@ def get_genres_list(db: Session, page: int = 1, limit: int = 20) -> GenresListRe
         has_previous=page > 1,
     )
 
-    links = {"self": f"/genres?page={page}&limit={limit}"}
-    if pagination.has_next:
-        links["next"] = f"/genres?page={page + 1}&limit={limit}"
-    if pagination.has_previous:
-        links["previous"] = f"/genres?page={page - 1}&limit={limit}"
+    links = build_pagination_links("/genres", page, limit, pagination)
 
     return GenresListResponse(genres=genre_responses, pagination=pagination, links=links)
 

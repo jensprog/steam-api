@@ -3,6 +3,7 @@ from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game
+from app.utils.hateoasbuilder import build_pagination_links
 
 
 def get_games_list(db: Session, page: int = 1, limit: int = 20) -> GamesListResponse:
@@ -21,11 +22,7 @@ def get_games_list(db: Session, page: int = 1, limit: int = 20) -> GamesListResp
         has_previous=page > 1,
     )
 
-    links = {"self": f"/games?page={page}&limit={limit}"}
-    if pagination.has_next:
-        links["next"] = f"/games?page={page + 1}&limit={limit}"
-    if pagination.has_previous:
-        links["previous"] = f"/games?page={page - 1}&limit={limit}"
+    links = build_pagination_links("/games", page, limit, pagination)
 
     return GamesListResponse(games=game_responses, pagination=pagination, links=links)
 
