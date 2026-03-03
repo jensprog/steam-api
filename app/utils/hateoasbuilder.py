@@ -2,9 +2,7 @@ from app.schemas import PaginationResponse
 from typing import Any
 
 
-def build_pagination_links(
-    base_url: str, page: int, limit: int, pagination: PaginationResponse
-) -> dict:
+def build_pagination_links(base_url: str, page: int, limit: int, pagination: PaginationResponse) -> dict:
     links = {"self": f"{base_url}?page={page}&limit={limit}"}
     if pagination.has_next:
         links["next"] = f"{base_url}?page={page + 1}&limit={limit}"

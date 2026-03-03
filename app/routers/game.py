@@ -19,9 +19,10 @@ router = APIRouter(tags=["Games"])
 def get_games(
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(20, ge=1, le=1000, description="Number of items per page"),
+    developer: str = Query(None, description="Filter games by developer name"),
     db: Session = Depends(get_db),
 ) -> GamesListResponse:
-    return get_games_list(db, page=page, limit=limit)
+    return get_games_list(db, developer=developer, page=page, limit=limit)
 
 
 @router.get("/{id}", response_model=GameResponse, status_code=200)

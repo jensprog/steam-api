@@ -87,9 +87,7 @@ def _create_game_from_row(row) -> Game:
         release_date=str(row.get("release_date", "")),
         price=float(row["price"]) if pd.notna(row.get("price")) else 0.0,
         estimated_owners=str(row.get("estimated_owners", "")),
-        metacritic_score=(
-            int(row["metacritic_score"]) if pd.notna(row.get("metacritic_score")) else 0
-        ),
+        metacritic_score=(int(row["metacritic_score"]) if pd.notna(row.get("metacritic_score")) else 0),
         positive=int(row["positive"]) if pd.notna(row.get("positive")) else 0,
         negative=int(row["negative"]) if pd.notna(row.get("negative")) else 0,
         average_playtime_forever=(
@@ -113,11 +111,7 @@ def _link_developers_to_game(db: Session, game: Game, row, dev_map: Dict[str, in
     dev_links_created = 0
     developers_data = row.get("developers")
 
-    if (
-        developers_data is not None
-        and isinstance(developers_data, list)
-        and len(developers_data) > 0
-    ):
+    if developers_data is not None and isinstance(developers_data, list) and len(developers_data) > 0:
         for dev_name in developers_data:
             if dev_name and dev_name.strip() in dev_map:
                 dev = db.query(Developer).filter(Developer.id == dev_map[dev_name.strip()]).first()

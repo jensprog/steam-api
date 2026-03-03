@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
@@ -6,9 +7,12 @@ from app.utils.serializers import serialize_game
 from app.utils.hateoasbuilder import build_pagination_links
 
 
-def get_games_list(db: Session, page: int = 1, limit: int = 20) -> GamesListResponse:
-    games = db.query(Game).limit(limit).offset((page - 1) * limit).all()
-    total_games = db.query(Game).count()
+def get_games_list(db: Session, developer: Optional[str] = None, page: int = 1, limit: int = 20) -> GamesListResponse:
+    query = db.query(Game)
+    if developer:
+        query = query.filter(Game.developers.any(name=developer))
+    games = query.limit(limit).offset((page - 1) * limit).all()
+    total_games = query.count()
 
     game_responses = [serialize_game(game) for game in games]
 

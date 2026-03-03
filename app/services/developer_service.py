@@ -24,9 +24,7 @@ def get_developers_list(db: Session, page: int = 1, limit: int = 20) -> Develope
 
     links = build_pagination_links("/developers", page, limit, pagination)
 
-    return DevelopersListResponse(
-        developers=developer_responses, pagination=pagination, links=links
-    )
+    return DevelopersListResponse(developers=developer_responses, pagination=pagination, links=links)
 
 
 def get_developer_by_id(db: Session, developer_id: int) -> DeveloperResponse | None:
