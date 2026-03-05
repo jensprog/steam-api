@@ -31,24 +31,50 @@ def serialize_game(game: Game, include_links: bool = True) -> GameResponse:
     if include_links:
         game_dict["links"] = build_resource_links("games", game.id, include_crud=True)
 
+        for dev in game.developers:
+            game_dict["links"].append(
+                {"rel": "related", "href": f"/developers/{dev.id}", "method": "GET", "title": f"Developer: {dev.name}"}
+            )
+
+        for genre in game.genres:
+            game_dict["links"].append(
+                {"rel": "related", "href": f"/genres/{genre.id}", "method": "GET", "title": f"Genre: {genre.name}"}
+            )
+
     return GameResponse(**game_dict)
 
 
-def serialize_developer(developer: Developer) -> DeveloperResponse:
+def serialize_developer(developer: Developer, include_links: bool = True) -> DeveloperResponse:
     developer_dict = {
         "id": developer.id,
         "name": developer.name,
-        "links": build_resource_links("developers", developer.id, include_crud=False),
+        "links": [],
     }
+
+    if include_links:
+        developer_dict["links"] = build_resource_links("developers", developer.id, include_crud=False)
+
+        for game in developer.games:
+            developer_dict["links"].append(
+                {"rel": "related", "href": f"/games/{game.id}", "method": "GET", "title": f"Game: {game.name}"}
+            )
 
     return DeveloperResponse(**developer_dict)
 
 
-def serialize_genres(genres: Genre) -> GenreResponse:
+def serialize_genres(genres: Genre, include_links: bool = True) -> GenreResponse:
     genre_dict = {
         "id": genres.id,
         "name": genres.name,
-        "links": build_resource_links("genres", genres.id, include_crud=False),
+        "links": [],
     }
+
+    if include_links:
+        genre_dict["links"] = build_resource_links("genres", genres.id, include_crud=False)
+
+        for game in genres.games:
+            genre_dict["links"].append(
+                {"rel": "related", "href": f"/games/{game.id}", "method": "GET", "title": f"Game: {game.name}"}
+            )
 
     return GenreResponse(**genre_dict)
