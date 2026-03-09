@@ -33,6 +33,14 @@ def get_game(id: int, db: Session = Depends(get_db)) -> GameResponse:
     return game
 
 
+@router.get("/{id}/price", status_code=status.HTTP_200_OK)
+def get_game_price(id: int, db: Session = Depends(get_db)):
+    game = get_game_by_id(db, id)
+    if not game:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+    return {"price": game.price}
+
+
 @router.post("/", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
 def create_one_game(
     game_data: GameCreate, db: Session = Depends(get_db), _current_user: User = Depends(get_current_user)
