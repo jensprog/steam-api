@@ -1,4 +1,7 @@
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from starlette import status
 from app.models.game import Game
 from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
@@ -44,10 +47,16 @@ def get_game_by_id(db: Session, game_id: int) -> GameResponse | None:
 
 def create_game(db: Session, game_data: GameCreate) -> GameResponse:
     new_game = Game(**game_data.model_dump())
-    db.add(new_game)
-    db.commit()
-    db.refresh(new_game)
-    return serialize_game(new_game)
+    try:
+        db.add(new_game)
+        db.commit()
+        db.refresh(new_game)
+        return serialize_game(new_game)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create game - constraint violation"
+        )
 
 
 def update_game(db: Session, game_id: int, game_data: GameUpdate) -> GameResponse | None:
@@ -57,17 +66,27 @@ def update_game(db: Session, game_id: int, game_data: GameUpdate) -> GameRespons
 
     for key, value in game_data.model_dump(exclude_unset=True).items():
         setattr(game, key, value)
-
-    db.commit()
-    db.refresh(game)
-    return serialize_game(game)
+    try:
+        db.commit()
+        db.refresh(game)
+        return serialize_game(game)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to update game - constraint violation"
+        )
 
 
 def delete_game(db: Session, game_id: int) -> bool:
     game = db.query(Game).filter(Game.id == game_id).first()
     if not game:
         return False
-
-    db.delete(game)
-    db.commit()
-    return True
+    try:
+        db.delete(game)
+        db.commit()
+        return True
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to delete game - referenced by other data"
+        )
