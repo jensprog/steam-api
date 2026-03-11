@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import DeveloperResponse, DevelopersListResponse
+from app.schemas import DeveloperResponse, DevelopersListResponse, DeveloperQueryParameters
 from app.services.developer_service import get_developer_by_id, get_developers_list
 
 """ Router for developer-related endpoints """
@@ -11,11 +11,10 @@ router = APIRouter(tags=["Developers"])
 
 @router.get("/", response_model=DevelopersListResponse, status_code=status.HTTP_200_OK)
 def get_developers(
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(20, ge=1, le=1000, description="Number of items per page"),
+    params: DeveloperQueryParameters = Depends(),
     db: Session = Depends(get_db),
 ) -> DevelopersListResponse:
-    return get_developers_list(db, page=page, limit=limit)
+    return get_developers_list(db, params)
 
 
 @router.get("/{id}", response_model=DeveloperResponse, status_code=status.HTTP_200_OK)

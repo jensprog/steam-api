@@ -18,8 +18,8 @@ def get_games_list(db: Session, params: GameQueryParameters) -> GamesListRespons
     if params.search:
         query = query.filter(Game.name.ilike(f"%{params.search}%"))
 
-    games = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
     total_games = query.count()
+    games = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
 
     game_responses = [serialize_game(game) for game in games]
 

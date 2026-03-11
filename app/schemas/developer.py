@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from app.schemas.game import PaginationResponse
 
 """ JSON structure for GET /developers/{id} endpoint"""
@@ -12,6 +12,14 @@ class DeveloperResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class DeveloperQueryParameters(BaseModel):
+    game: Optional[str] = None
+    genre: Optional[str] = None
+    search: Optional[str] = None
+    page: int = 1
+    limit: int = 20
 
 
 """ JSON structure for GET /developers endpoint"""

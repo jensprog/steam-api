@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import GenreResponse, GenresListResponse
+from app.schemas import GenreResponse, GenresListResponse, GenreQueryParameters
 from app.services.genre_service import get_genre_by_id, get_genres_list
 
 """ Router for genre-related endpoints """
@@ -11,11 +11,10 @@ router = APIRouter(tags=["Genres"])
 
 @router.get("/", response_model=GenresListResponse, status_code=status.HTTP_200_OK)
 def get_genres(
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(20, ge=1, le=1000, description="Number of items per page"),
+    params: GenreQueryParameters = Depends(),
     db: Session = Depends(get_db),
 ) -> GenresListResponse:
-    return get_genres_list(db, page=page, limit=limit)
+    return get_genres_list(db, params)
 
 
 @router.get("/{id}", response_model=GenreResponse, status_code=status.HTTP_200_OK)
