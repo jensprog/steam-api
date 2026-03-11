@@ -14,4 +14,13 @@ app.include_router(auth.router, prefix="/auth")
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the Steam Games API!"}
+    return {
+        "message": "Welcome to the Steam Games API!",
+        "links": [
+            {"rel": "games", "href": "/games", "method": "GET"},
+            {"rel": "developers", "href": "/developers", "method": "GET"},
+            {"rel": "genres", "href": "/genres", "method": "GET"},
+            {"rel": "register", "href": "/auth/register", "method": "POST"},
+            {"rel": "login", "href": "/auth/login", "method": "POST"},
+        ],
+    }
