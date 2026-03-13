@@ -1,0 +1,9 @@
+stages:
+  - test
+
+api-tests:
+  stage: test
+  image: node:18-alpine
+  script:
+    - npm install -g newman
+    - newman run SteamAPI.postman_collection.json --environment production.postman_environment.json
