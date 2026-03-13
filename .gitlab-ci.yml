@@ -16,6 +16,8 @@ api-tests:
     - apk add --no-cache python3 py3-pip
     - pip3 install -r requirements.txt --break-system-packages
     - npm install -g newman
+    - export PYTHONPATH=/builds/1dv027/student/jk224vx/exercises/steam-api:$PYTHONPATH
+    - python3 app/seed/steamgames.py
     - python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
-    - sleep 10
+    - sleep 15
     - newman run SteamAPI.postman_collection.json --environment localhost.postman_environment.json
