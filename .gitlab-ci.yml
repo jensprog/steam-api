@@ -5,5 +5,9 @@ api-tests:
   stage: test
   image: node:18-alpine
   script:
+    - apk add --no-cache python3 py3-pip
+    - pip3 install -r requirements.txt
     - npm install -g newman
-    - newman run SteamAPI.postman_collection.json --environment production.postman_environment.json
+    - cd app && python3 -m uvicorn main:app --host 127.0.0.1 --port 8000 &
+    - sleep 10
+    - cd .. && newman run SteamAPI.postman_collection.json --environment localhost.postman_environment.json
