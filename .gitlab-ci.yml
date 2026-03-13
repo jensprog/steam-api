@@ -4,6 +4,14 @@ stages:
 api-tests:
   stage: test
   image: node:18-alpine
+  services:
+    - postgres:latest
+  variables:
+    POSTGRES_DB: testdb
+    POSTGRES_USER: testuser
+    POSTGRES_PASSWORD: testpass
+    DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
+    JWT_SECRET: "test-secret-key-for-ci"
   script:
     - apk add --no-cache python3 py3-pip
     - pip3 install -r requirements.txt --break-system-packages
