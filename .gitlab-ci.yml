@@ -8,6 +8,6 @@ api-tests:
     - apk add --no-cache python3 py3-pip
     - pip3 install -r requirements.txt --break-system-packages
     - npm install -g newman
-    - cd app && python3 -m uvicorn main:app --host 127.0.0.1 --port 8000 &
+    - python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
     - sleep 10
-    - cd .. && newman run SteamAPI.postman_collection.json --environment localhost.postman_environment.json
+    - newman run SteamAPI.postman_collection.json --environment localhost.postman_environment.json
