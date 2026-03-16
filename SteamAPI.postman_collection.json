@@ -554,7 +554,7 @@
 								"exec": [
 									"const randomName = \"Test Game \" + Math.random().toString(36).substring(7);",
 									"const randomPrice = parseFloat((Math.random() * 100).toFixed(2));",
-									"const randomAppId = Math.floor(Math.random() * 100000);",
+									"const randomAppId = Date.now() + Math.floor(Math.random() * 1000);",
 									"",
 									"pm.environment.set(\"random_game_name\", randomName);",
 									"pm.environment.set(\"random_game_price\", randomPrice);",
@@ -1303,7 +1303,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const validDeveloperId = Math.floor(Math.random() * 100) + 1;",
+									"const validDeveloperId = Math.floor(Math.random() * 5) + 1;",
 									"pm.environment.set(\"validDeveloperId\", validDeveloperId);"
 								],
 								"type": "text/javascript",
@@ -1456,7 +1456,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const validGenreId = Math.floor(Math.random() * 27) + 1;",
+									"const validGenreId = Math.floor(Math.random() * 5) + 1;",
 									"pm.environment.set(\"validGenreId\", validGenreId);"
 								],
 								"type": "text/javascript",
