@@ -83,8 +83,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
+								"exec": [
+									"pm.environment.get(\"register_username\");"
+								],
+								"type": "text/javascript",
 								"packages": {},
-								"type": "text/javascript"
+								"requests": {}
 							}
 						}
 					],
@@ -340,7 +344,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const validGameId = Math.floor(Math.random() * 1000) + 1;",
+									"const validGameId = Math.floor(Math.random() * 15000) + 1;",
 									"pm.environment.set(\"validGameId\", validGameId);"
 								],
 								"type": "text/javascript",
@@ -349,9 +353,21 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/games/{{validGameId}}",
 							"host": [
@@ -1105,7 +1121,25 @@
 								"exec": [
 									"pm.test(\"Status code is 200 if successful fetch of price\", function() {",
 									"    pm.response.to.have.status(200);",
-									"});"
+									"});",
+									"",
+									"console.log(\"Final request URL:\", pm.request.url.toString());"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const gameId = pm.environment.get(\"created_game_id\");",
+									"console.log(\"=== DEBUG INFO ===\");",
+									"console.log(\"Retrieved game ID:\", gameId);",
+									"console.log(\"Type of game ID:\", typeof gameId);",
+									"console.log(\"Is undefined?\", gameId === undefined);",
+									"console.log(\"Is null?\", gameId === null);"
 								],
 								"type": "text/javascript",
 								"packages": {},
@@ -1117,13 +1151,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/games/15004/price",
+							"raw": "{{baseUrl}}/games/1/price",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"games",
-								"15004",
+								"1",
 								"price"
 							]
 						}
