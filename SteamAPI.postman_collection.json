@@ -344,8 +344,14 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"const validGameId = Math.floor(Math.random() * 15000) + 1;",
-									"pm.environment.set(\"validGameId\", validGameId);"
+									"if (pm.environment.get(\"environment\") === \"CI\") {",
+									"    const mockIds = JSON.parse(pm.environment.get(\"mockGameIds\"));",
+									"    const validGameId = mockIds[Math.floor(Math.random() * mockIds.length)];",
+									"    pm.environment.set(\"validGameId\", validGameId);",
+									"} else {",
+									"    const validGameId = Math.floor(Math.random() * 15000) + 1;",
+									"    pm.environment.set(\"validGameId\", validGameId);",
+									"}"
 								],
 								"type": "text/javascript",
 								"packages": {},
