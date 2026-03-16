@@ -47,13 +47,21 @@ try:
 
     # Create specific games that tests expect
     specific_games = [
-        Game(id=1, name="Test Game 1", price=19.99, developer_id=developers[0].id),
-        Game(id=100, name="Test Game 100", price=29.99, developer_id=developers[1].id),
-        Game(id=500, name="Test Game 500", price=9.99, developer_id=developers[2].id),
-        Game(id=5783, name="Counter-Strike", price=0.00, developer_id=developers[2].id),
-        Game(id=9790, name="Call of Duty", price=59.99, developer_id=developers[3].id),
-        Game(id=11220, name="Portal", price=19.99, developer_id=developers[2].id),
+        Game(id=1, name="Test Game 1", price=19.99),
+        Game(id=100, name="Test Game 100", price=29.99),
+        Game(id=500, name="Test Game 500", price=9.99),
+        Game(id=5783, name="Counter-Strike", price=0.00),
+        Game(id=9790, name="Call of Duty", price=59.99),
+        Game(id=11220, name="Portal", price=19.99),
     ]
+    
+    # Add developers to specific games
+    specific_games[0].developers.append(developers[0])  # Test Game 1
+    specific_games[1].developers.append(developers[1])  # Test Game 100
+    specific_games[2].developers.append(developers[2])  # Test Game 500 -> Valve
+    specific_games[3].developers.append(developers[2])  # Counter-Strike -> Valve
+    specific_games[4].developers.append(developers[3])  # Call of Duty
+    specific_games[5].developers.append(developers[2])  # Portal -> Valve
 
     # Generate additional random games
     game_names = [
@@ -92,16 +100,18 @@ try:
             id=game_id,
             name=f"{random.choice(game_names)} {game_id}",
             price=round(random.uniform(5.99, 69.99), 2),
-            developer_id=random.choice(developers).id,
         )
         additional_games.append(game)
 
     all_games = specific_games + additional_games
     db.add_all(all_games)
-
-    # Add genres to games (many-to-many relationship)
-    for game in all_games:
-        # Add 1-3 random genres to each game
+    
+    # Add developers and genres to additional games (many-to-many relationships)
+    for game in additional_games:
+        # Add random developer
+        game.developers.append(random.choice(developers))
+        
+        # Add 1-3 random genres
         num_genres = random.randint(1, 3)
         game_genres = random.sample(genres, num_genres)
         game.genres.extend(game_genres)
