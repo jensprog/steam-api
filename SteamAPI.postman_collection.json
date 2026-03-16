@@ -554,7 +554,7 @@
 								"exec": [
 									"const randomName = \"Test Game \" + Math.random().toString(36).substring(7);",
 									"const randomPrice = parseFloat((Math.random() * 100).toFixed(2));",
-									"const randomAppId = Date.now() + Math.floor(Math.random() * 1000);",
+									"const randomAppId = Math.floor(Math.random() * 1000000) * 200000;",
 									"",
 									"pm.environment.set(\"random_game_name\", randomName);",
 									"pm.environment.set(\"random_game_price\", randomPrice);",
