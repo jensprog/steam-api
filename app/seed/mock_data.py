@@ -2,7 +2,7 @@ import sys
 import random
 import logging
 from pathlib import Path
-from app.database import SessionLocal
+from app.database import SessionLocal, engine, Base
 from app.models.game import Game
 from app.models.developer import Developer
 from app.models.genre import Genre
@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 logger.info("Creating mock test data...")
+
+Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 

@@ -17,7 +17,6 @@ api-tests:
     - pip3 install -r requirements.txt --break-system-packages
     - npm install -g newman
     - export PYTHONPATH="$CI_PROJECT_DIR:$PYTHONPATH"
-    - python3 -c "from app.database import engine, Base; Base.metadata.create_all(bind=engine)"
     - python3 app/seed/mock_data.py
     - python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
     - sleep 10
