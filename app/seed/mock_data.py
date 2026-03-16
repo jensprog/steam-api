@@ -45,14 +45,14 @@ try:
     db.flush()
     logger.info(f"Created {len(genres)} mock genres")
 
-    # Create specific games that tests expect
+    # Create specific games that tests expect (let PostgreSQL auto-assign IDs)
     specific_games = [
-        Game(id=1, app_id=1001, name="Test Game 1", price=19.99),
-        Game(id=100, app_id=1100, name="Test Game 100", price=29.99),
-        Game(id=500, app_id=1500, name="Test Game 500", price=9.99),
-        Game(id=5783, app_id=15783, name="Counter-Strike", price=0.00),
-        Game(id=9790, app_id=19790, name="Call of Duty", price=59.99),
-        Game(id=11220, app_id=21220, name="Portal", price=19.99),
+        Game(app_id=1001, name="Test Game 1", price=19.99),
+        Game(app_id=1100, name="Test Game 100", price=29.99),
+        Game(app_id=1500, name="Test Game 500", price=9.99),
+        Game(app_id=15783, name="Counter-Strike", price=0.00),
+        Game(app_id=19790, name="Call of Duty", price=59.99),
+        Game(app_id=21220, name="Portal", price=19.99),
     ]
 
     # Add developers to specific games
@@ -97,7 +97,6 @@ try:
         used_ids.add(game_id)
 
         game = Game(
-            id=game_id,
             app_id=game_id + 5000,
             name=f"{random.choice(game_names)} {game_id}",
             price=round(random.uniform(5.99, 69.99), 2),
