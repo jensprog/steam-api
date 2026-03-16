@@ -15,6 +15,6 @@ try:
     print("✅ Database cleared")
 except Exception as e:
     db.rollback()
-    print(f"❌ Error: {e}")
+    print(f"Error: {e}")
 finally:
     db.close()

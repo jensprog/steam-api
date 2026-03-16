@@ -22,7 +22,7 @@ def load_developers(db: Session, developers: set) -> Dict[str, int]:
             dev_map[dev_name] = new_dev.id
 
     db.commit()
-    print(f"✅ Loaded {len(dev_map)} developers")
+    print(f"Loaded {len(dev_map)} developers")
     return dev_map
 
 
@@ -44,7 +44,7 @@ def load_genres(db: Session, genres: set) -> Dict[str, int]:
             genre_map[genre_name] = new_genre.id
 
     db.commit()
-    print(f"✅ Loaded {len(genre_map)} genres")
+    print(f"Loaded {len(genre_map)} genres")
     return genre_map
 
 
@@ -69,13 +69,13 @@ def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map
                 print(f"Progress: {games_loaded}/{len(df)} games loaded...")
 
         db.commit()
-        print(f"✅ Loaded all {games_loaded} games successfully!")
+        print(f"Loaded all {games_loaded} games successfully!")
         print(f"Total developer links: {total_dev_links}")
         print(f"Total genre links: {total_genre_links}")
 
     except Exception as e:
         db.rollback()
-        print(f"❌ Error loading games: {e}")
+        print(f"Error loading games: {e}")
         raise
 
 
