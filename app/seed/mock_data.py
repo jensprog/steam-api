@@ -47,14 +47,14 @@ try:
 
     # Create specific games that tests expect
     specific_games = [
-        Game(id=1, name="Test Game 1", price=19.99),
-        Game(id=100, name="Test Game 100", price=29.99),
-        Game(id=500, name="Test Game 500", price=9.99),
-        Game(id=5783, name="Counter-Strike", price=0.00),
-        Game(id=9790, name="Call of Duty", price=59.99),
-        Game(id=11220, name="Portal", price=19.99),
+        Game(id=1, app_id=1001, name="Test Game 1", price=19.99),
+        Game(id=100, app_id=1100, name="Test Game 100", price=29.99),
+        Game(id=500, app_id=1500, name="Test Game 500", price=9.99),
+        Game(id=5783, app_id=15783, name="Counter-Strike", price=0.00),
+        Game(id=9790, app_id=19790, name="Call of Duty", price=59.99),
+        Game(id=11220, app_id=21220, name="Portal", price=19.99),
     ]
-    
+
     # Add developers to specific games
     specific_games[0].developers.append(developers[0])  # Test Game 1
     specific_games[1].developers.append(developers[1])  # Test Game 100
@@ -98,6 +98,7 @@ try:
 
         game = Game(
             id=game_id,
+            app_id=game_id + 5000,
             name=f"{random.choice(game_names)} {game_id}",
             price=round(random.uniform(5.99, 69.99), 2),
         )
@@ -105,12 +106,12 @@ try:
 
     all_games = specific_games + additional_games
     db.add_all(all_games)
-    
+
     # Add developers and genres to additional games (many-to-many relationships)
     for game in additional_games:
         # Add random developer
         game.developers.append(random.choice(developers))
-        
+
         # Add 1-3 random genres
         num_genres = random.randint(1, 3)
         game_genres = random.sample(genres, num_genres)
