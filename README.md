@@ -136,7 +136,7 @@ _Specify: REST or GraphQL_
 1. **CI/CD pipeline** — check the pipeline output in GitLab for test results.
 2. **Run manually** — no setup needed:
    ```
-   npx newman run <collection.json> -e production.postman_environment.json
+   npx newman run SteamAPI.postman_collection.json -e production.postman_environment.json --insecure
    ```
 
 ## Dataset
