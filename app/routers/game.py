@@ -6,6 +6,7 @@ from app.models.user import User
 from app.repositories.interfaces import GameRepositoryInterface
 from app.repositories.sqlalchemy_repositories import SQLAlchemyGameRepository
 from app.schemas import GamesListResponse, GameResponse, GameCreate, GameUpdate, GameQueryParameters
+from app.utils.errors import not_found_error
 from app.services.game_service import (
     create_game,
     delete_game,
@@ -36,7 +37,7 @@ def get_games(
 def get_game(id: int, game_repo: GameRepositoryInterface = Depends(get_game_repository)) -> GameResponse:
     game = get_game_by_id(game_repo, id)
     if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise not_found_error("game", id)
     return game
 
 
@@ -44,7 +45,7 @@ def get_game(id: int, game_repo: GameRepositoryInterface = Depends(get_game_repo
 def get_game_price(id: int, game_repo: GameRepositoryInterface = Depends(get_game_repository)):
     game = get_game_by_id(game_repo, id)
     if not game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise not_found_error("game", id)
     return {"price": game.price}
 
 
@@ -66,7 +67,7 @@ def update_one_game(
 ) -> GameResponse:
     updated_game = update_game(game_repo, id, game_data)
     if not updated_game:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise not_found_error("game", id)
     return updated_game
 
 
@@ -78,4 +79,4 @@ def delete_one_game(
 ):
     deleted = delete_game(game_repo, id)
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+        raise not_found_error("game", id)
