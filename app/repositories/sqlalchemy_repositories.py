@@ -72,4 +72,3 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
         except IntegrityError as e:
             self.db.rollback()
             raise ConstraintViolationError(f"Failed to delete game - referenced by other data: {str(e)}")
-
