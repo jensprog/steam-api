@@ -1,25 +1,14 @@
-from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
 from starlette import status
-from app.models.game import Game
+from app.repositories.interfaces import GameRepositoryInterface, RepositoryError
 from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game
 from app.utils.hateoasbuilder import build_pagination_links
 
 
-def get_games_list(db: Session, params: GameQueryParameters) -> GamesListResponse:
-    query = db.query(Game)
-    if params.developer:
-        query = query.filter(Game.developers.any(name=params.developer))
-    if params.genre:
-        query = query.filter(Game.genres.any(name=params.genre))
-    if params.search:
-        query = query.filter(Game.name.ilike(f"%{params.search}%"))
-
-    total_games = query.count()
-    games = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
+def get_games_list(game_repo: GameRepositoryInterface, params: GameQueryParameters) -> GamesListResponse:
+    games, total_games = game_repo.find_filtered(params)
 
     game_responses = [serialize_game(game) for game in games]
 
@@ -38,56 +27,39 @@ def get_games_list(db: Session, params: GameQueryParameters) -> GamesListRespons
     return GamesListResponse(games=game_responses, pagination=pagination, links=links)
 
 
-def get_game_by_id(db: Session, game_id: int) -> GameResponse | None:
-    game = db.query(Game).filter(Game.id == game_id).first()
+def get_game_by_id(game_repo: GameRepositoryInterface, game_id: int) -> GameResponse | None:
+    game = game_repo.find_by_id(game_id)
     if not game:
         return None
     return serialize_game(game)
 
 
-def create_game(db: Session, game_data: GameCreate) -> GameResponse:
-    new_game = Game(**game_data.model_dump())
+def create_game(game_repo: GameRepositoryInterface, game_data: GameCreate) -> GameResponse:
     try:
-        db.add(new_game)
-        db.commit()
-        db.refresh(new_game)
+        new_game = game_repo.save(game_data)
         return serialize_game(new_game)
-    except IntegrityError as e:
-        db.rollback()
-        print(f"DEBUG: IntegrityError details: {str(e)}")
+    except RepositoryError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=f"Failed to create game - constraint violation: {str(e)}"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )
 
 
-def update_game(db: Session, game_id: int, game_data: GameUpdate) -> GameResponse | None:
-    game = db.query(Game).filter(Game.id == game_id).first()
-    if not game:
-        return None
-
-    for key, value in game_data.model_dump(exclude_unset=True).items():
-        setattr(game, key, value)
+def update_game(game_repo: GameRepositoryInterface, game_id: int, game_data: GameUpdate) -> GameResponse | None:
     try:
-        db.commit()
-        db.refresh(game)
+        game = game_repo.update(game_id, game_data)
+        if not game:
+            return None
         return serialize_game(game)
-    except IntegrityError:
-        db.rollback()
+    except RepositoryError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to update game - constraint violation"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )
 
 
-def delete_game(db: Session, game_id: int) -> bool:
-    game = db.query(Game).filter(Game.id == game_id).first()
-    if not game:
-        return False
+def delete_game(game_repo: GameRepositoryInterface, game_id: int) -> bool:
     try:
-        db.delete(game)
-        db.commit()
-        return True
-    except IntegrityError:
-        db.rollback()
+        return game_repo.remove(game_id)
+    except RepositoryError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to delete game - referenced by other data"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
         )

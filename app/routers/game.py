@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.security import get_current_user
 from app.models.user import User
+from app.repositories.interfaces import GameRepositoryInterface
+from app.repositories.sqlalchemy_repositories import SQLAlchemyGameRepository
 from app.schemas import GamesListResponse, GameResponse, GameCreate, GameUpdate, GameQueryParameters
 from app.services.game_service import (
     create_game,
@@ -17,25 +19,30 @@ from app.services.game_service import (
 router = APIRouter(tags=["Games"])
 
 
+def get_game_repository(db: Session = Depends(get_db)) -> GameRepositoryInterface:
+    """Dependency injection for game repository"""
+    return SQLAlchemyGameRepository(db)
+
+
 @router.get("/", response_model=GamesListResponse, status_code=status.HTTP_200_OK)
 def get_games(
     params: GameQueryParameters = Depends(),
-    db: Session = Depends(get_db),
+    game_repo: GameRepositoryInterface = Depends(get_game_repository),
 ) -> GamesListResponse:
-    return get_games_list(db, params)
+    return get_games_list(game_repo, params)
 
 
 @router.get("/{id}", response_model=GameResponse, status_code=status.HTTP_200_OK)
-def get_game(id: int, db: Session = Depends(get_db)) -> GameResponse:
-    game = get_game_by_id(db, id)
+def get_game(id: int, game_repo: GameRepositoryInterface = Depends(get_game_repository)) -> GameResponse:
+    game = get_game_by_id(game_repo, id)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
     return game
 
 
 @router.get("/{id}/price", status_code=status.HTTP_200_OK)
-def get_game_price(id: int, db: Session = Depends(get_db)):
-    game = get_game_by_id(db, id)
+def get_game_price(id: int, game_repo: GameRepositoryInterface = Depends(get_game_repository)):
+    game = get_game_by_id(game_repo, id)
     if not game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
     return {"price": game.price}
@@ -43,23 +50,32 @@ def get_game_price(id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
 def create_one_game(
-    game_data: GameCreate, db: Session = Depends(get_db), _current_user: User = Depends(get_current_user)
+    game_data: GameCreate, 
+    game_repo: GameRepositoryInterface = Depends(get_game_repository),
+    _current_user: User = Depends(get_current_user)
 ) -> GameResponse:
-    return create_game(db, game_data)
+    return create_game(game_repo, game_data)
 
 
 @router.put("/{id}", response_model=GameResponse, status_code=status.HTTP_200_OK)
 def update_one_game(
-    id: int, game_data: GameUpdate, db: Session = Depends(get_db), _current_user: User = Depends(get_current_user)
+    id: int, 
+    game_data: GameUpdate, 
+    game_repo: GameRepositoryInterface = Depends(get_game_repository),
+    _current_user: User = Depends(get_current_user)
 ) -> GameResponse:
-    updated_game = update_game(db, id, game_data)
+    updated_game = update_game(game_repo, id, game_data)
     if not updated_game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
     return updated_game
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_one_game(id: int, db: Session = Depends(get_db), _current_user: User = Depends(get_current_user)):
-    deleted = delete_game(db, id)
+def delete_one_game(
+    id: int, 
+    game_repo: GameRepositoryInterface = Depends(get_game_repository),
+    _current_user: User = Depends(get_current_user)
+):
+    deleted = delete_game(game_repo, id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
