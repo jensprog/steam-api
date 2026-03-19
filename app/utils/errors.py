@@ -31,6 +31,16 @@ def validation_error(field: str, value: Any, constraint: str) -> HTTPException:
     )
 
 
+def unproccessable_entity_error(field: str, value: Any, constraint: str) -> HTTPException:
+    """Create a 422 error for unprocessable entity."""
+    return create_http_exception(
+        status_code=422,
+        error_code=ErrorCodes.VALIDATION_ERROR,
+        message=f"Unprocessable entity: '{field}' contains semantically invalid data.",
+        details={"field": field, "value": value, "constraint": constraint},
+    )
+
+
 def database_error(message: str) -> HTTPException:
     """Create a 500 error for database-related issues."""
     return create_http_exception(

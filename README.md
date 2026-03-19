@@ -153,22 +153,194 @@ _Describe the dataset you chose:_
 
 ### Authentication
 
-_Describe your JWT authentication solution. Why did you choose this approach? What alternatives exist, and what are their trade-offs?_
+JWT is required for 3 endpoints:
 
-### API Design
+- POST /games
+- PUT /games/{id}
+- DELETE /games/{id}
 
-**REST students:**
+JWT authentication was a requirement for this project. The implementation follows REST principles by being stateless - each request contains all necessary authentication information.
 
-- _How did you implement HATEOAS? How does it improve API discoverability?_
-- _How did you structure your resource URLs and use HTTP methods/status codes?_
+**Implementation details:**
+
+- Token expires after 30 minutes for security.
+- Only write operations (POST, PUT, DELETE) require authentication.
+- Read operations remain publicly accessible.
+- Bearer token sent via Authorization header.
+
+**Token Refresh:**
+Will be implemented when frontend is going to be built.
+
+## API Design
+
+### HATEOAS
+
+**1. Pagination Links (`build_pagination_links`):**
+
+- Generates `self`, `next` and `previous` links for paginated results.
+- Used in all list endpoints (/games, /developers, /genres).
+- Improves navigation through large datasets.
+
+**2. Resource Links (`build_resource_links`):**
+
+- Creates hypermedia links for individual resources.
+- `include_crud=True` for games (shows update/delete links for authenticated users).
+- `include_crud=False` for read-only resources (developers/genres).
+
+**3. Related Resource Links (serializer.py):**
+
+- Creates domain-specific links between related resources.
+- Games link to their developers and genres.
+- Developers and genres link back to their games.
+- Only included when `include_links=True` for performance flexibility.
+- Enables full navigation between interconnected resources.
+
+**API Discoverability Benefits:**
+
+- Clients don't need to construct URLs manually.
+- Dynamic links show available actions (CRUD operations).
+- Pagination is self-documenting with next/previous links.
+
+**Example Response:**
+
+```json
+{
+  "id": 10773,
+  "name": "BAFF Halloween",
+  "price": 0.55,
+  "developers": ["Blender Games"],
+  "genres": ["Casual", "Indie"],
+  "links": [
+    { "rel": "self", "href": "/games/10773", "method": "GET" },
+    { "rel": "update", "href": "/games/10773", "method": "PUT" },
+    { "rel": "delete", "href": "/games/10773", "method": "DELETE" },
+    {
+      "rel": "related",
+      "href": "/developers/3492",
+      "method": "GET",
+      "title": "Developer: Blender Games"
+    },
+    {
+      "rel": "related",
+      "href": "/genres/6",
+      "method": "GET",
+      "title": "Genre: Casual"
+    },
+    {
+      "rel": "related",
+      "href": "/genres/10",
+      "method": "GET",
+      "title": "Genre: Indie"
+    }
+  ]
+}
+```
+
+### Resource URLs and HTTP Methods
+
+**URL Structure:**
+
+- `/games` - Collection endpoints.
+- `/games/{id}` - Individual resource endpoints.
+- `/games/{id}/price` - Sub-resource for specific data.
+- `/developers` and `/genres` - Read-only collections
+
+**HTTP Methods & Status Codes:**
+
+| Method | Endpoint      | Purpose           | Success | Error              |
+| ------ | ------------- | ----------------- | ------- | ------------------ |
+| GET    | `/games`      | List games        | 200     | -                  |
+| GET    | `/games/{id}` | Get specific game | 200     | 404, 422           |
+| POST   | `/games`      | Create game       | 201     | 400, 422, 401      |
+| PUT    | `/games/{id}` | Update game       | 200     | 400, 404, 422, 401 |
+| DELETE | `/games/{id}` | Delete game       | 204     | 404, 422, 401      |
+
+**Status Code Strategy:**
+
+- **200** - Successful GET/PUT operations.
+- **201** - Resource created successfully.
+- **204** - Successful deletion (no content).
+- **400** - Bad request/validation errors.
+- **401** - Authentication required.
+- **404** - Resource not found.
+- **422** - Unproccessable Entity (invalid ID format)
 
 ### Error Handling
 
-_How does your API handle errors? Describe the format and consistency of your error responses._
+**Standardized Error Format:**
+All errors follow a constistent JSON structure defined in `app/schemas/error.py`:
+
+```json
+{
+  "status_code": 422,
+  "error_code": "VALIDATION_ERROR",
+  "message": "Unproccessable entity: 'id' contains semantically invalid data.",
+  "details": {
+    "field": "id",
+    "value": -1,
+    "constraint": "ID must be a positive integer"
+  }
+}
+```
+
+Error Categories:
+
+- VALIDATION_ERROR - Invalid input data (400/422)
+- NOT_FOUND - Resource doesn't exist (404)
+- UNAUTHORIZED - Authentication required (401)
+- CONFLICT - Resource conflict (409)
+- DATABASE\*ERROR - Server issues (500)
+
+Reusable Error Functions (utils/errors.py):
+
+- validation_error() - 400 for syntax errors.
+- unproccessable_entity_error() - 422 for semantic errors.
+- not_found_error() - 404 for missing resources.
+- conflict_error() - 409 for duplicate resources.
+- database\*error() - 500 for server issues.
+
+Benefits:
+
+- Consistent error format across all endpoints.
+- Machine-readable error codes for client handling.
+- Detailed context in `details` field for debugging.
+- Centralized error handling prevents inconsistencies.
 
 ## Core Technologies Used
 
-_List the technologies you chose and briefly explain why:_
+**Backend Framework:**
+
+- **FastAPI** - Modern Python web framework with automatic OpenAPI documentation and type hints.
+- **Uvicorn** - ASGI server for high-performance async handling.
+
+**Database & ORM:**
+
+- **PostgreSQL** - Production database via `psycopg2-binary`.
+- **SQLAlchemy 2.0** - Modern ORM with async support and type safety.
+
+**Authentication & Security:**
+
+- **PyJWT** - JWT token generation and validation.
+- **Passlib + Bcrypt** - Secure password hashing.
+
+**Data Processing & Validation:**
+
+- **Pydantic** - Data validation, serialization and API schema definition.
+- **Pandas** - Data processing for the Steam dataset import.
+
+**Development & Deployment:**
+
+- **Python-multipart** - File upload support.
+- **Pydantic-settings** - Configuration management.
+
+**Why these choices:**
+
+- FastAPI for automatic documentation and modern async Python.
+- PostgreSQL for production-grade relational data storage.
+- SQLAlchemy for database abstraction and migration support.
+- JWT for stateless authentication fitting REST principles.
+
+This is the first time developing in Python, most of the tech stack I researched on google and asked AI for help with recommended different frameworks and libraries.
 
 ## Reflection
 
@@ -203,10 +375,14 @@ See [all requirements in Issues](../../issues/). Close issues as you implement t
 
 | Requirement                                                 | Issue                  | Status               |
 | ----------------------------------------------------------- | ---------------------- | -------------------- |
-| API documentation (Swagger/OpenAPI or Postman)              | [#6](../../issues/6)   | :white_large_square: |
+| API documentation (Swagger/OpenAPI or Postman)              | [#6](../../issues/6)   | :white_check_mark:   |
 | Automated Postman tests (20+ test cases, success + failure) | [#7](../../issues/7)   | :white_check_mark:   |
 | CI/CD pipeline running tests on every commit/MR             | [#8](../../issues/8)   | :white_check_mark:   |
 | Seed script for sample data                                 | [#5](../../issues/5)   | :white_check_mark:   |
 | Code quality (consistent standard, modular, documented)     | [#10](../../issues/10) | :white_large_square: |
 | Deployed and publicly accessible                            | [#9](../../issues/9)   | :white_check_mark:   |
 | Peer review reflection submitted on merge request           | [#11](../../issues/11) | :white_large_square: |
+
+```
+
+```

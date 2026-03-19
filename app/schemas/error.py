@@ -32,7 +32,6 @@ class ErrorCodes:
     VALIDATION_ERROR = "VALIDATION_ERROR"
     NOT_FOUND = "NOT_FOUND"
     UNAUTHORIZED = "UNAUTHORIZED"
-    FORBIDDEN = "FORBIDDEN"
     CONFLICT = "CONFLICT"
 
     # Server errors (5xx)
