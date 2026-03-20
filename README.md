@@ -397,7 +397,7 @@ See [all requirements in Issues](../../issues/). Close issues as you implement t
 | Automated Postman tests (20+ test cases, success + failure) | [#7](../../issues/7)   | :white_check_mark:   |
 | CI/CD pipeline running tests on every commit/MR             | [#8](../../issues/8)   | :white_check_mark:   |
 | Seed script for sample data                                 | [#5](../../issues/5)   | :white_check_mark:   |
-| Code quality (consistent standard, modular, documented)     | [#10](../../issues/10) | :white_large_square: |
+| Code quality (consistent standard, modular, documented)     | [#10](../../issues/10) | :white_check_mark:   |
 | Deployed and publicly accessible                            | [#9](../../issues/9)   | :white_check_mark:   |
 | Peer review reflection submitted on merge request           | [#11](../../issues/11) | :white_large_square: |
 
