@@ -1,10 +1,16 @@
-from fastapi import HTTPException
-from starlette import status
 from app.repositories.interfaces import GameRepositoryInterface, RepositoryError
 from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game
 from app.utils.hateoasbuilder import build_pagination_links
+from app.utils.errors import validation_error
+
+"""
+Business logic for game operations.
+
+Handles game CRUD operations with proper serialization,
+pagination, and error handling.
+"""
 
 
 def get_games_list(game_repo: GameRepositoryInterface, params: GameQueryParameters) -> GamesListResponse:
@@ -39,9 +45,7 @@ def create_game(game_repo: GameRepositoryInterface, game_data: GameCreate) -> Ga
         new_game = game_repo.save(game_data)
         return serialize_game(new_game)
     except RepositoryError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise validation_error("game", game_data, str(e))
 
 
 def update_game(game_repo: GameRepositoryInterface, game_id: int, game_data: GameUpdate) -> GameResponse | None:
@@ -51,15 +55,11 @@ def update_game(game_repo: GameRepositoryInterface, game_id: int, game_data: Gam
             return None
         return serialize_game(game)
     except RepositoryError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise validation_error("game", game_data, str(e))
 
 
 def delete_game(game_repo: GameRepositoryInterface, game_id: int) -> bool:
     try:
         return game_repo.remove(game_id)
     except RepositoryError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise validation_error("game_id", game_id, str(e))

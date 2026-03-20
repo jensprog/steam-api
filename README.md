@@ -263,7 +263,7 @@ Will be implemented when frontend is going to be built.
 - **400** - Bad request/validation errors.
 - **401** - Authentication required.
 - **404** - Resource not found.
-- **422** - Unproccessable Entity (invalid ID format)
+- **422** - Unprocessable Entity (invalid ID format)
 
 ### Error Handling
 
@@ -274,7 +274,7 @@ All errors follow a constistent JSON structure defined in `app/schemas/error.py`
 {
   "status_code": 422,
   "error_code": "VALIDATION_ERROR",
-  "message": "Unproccessable entity: 'id' contains semantically invalid data.",
+  "message": "Unprocessable entity: 'id' contains semantically invalid data.",
   "details": {
     "field": "id",
     "value": -1,
@@ -289,7 +289,7 @@ Error Categories:
 - NOT_FOUND - Resource doesn't exist (404)
 - UNAUTHORIZED - Authentication required (401)
 - CONFLICT - Resource conflict (409)
-- DATABASE\*ERROR - Server issues (500)
+- DATABASE_ERROR - Server issues (500)
 
 Reusable Error Functions (utils/errors.py):
 
@@ -344,11 +344,29 @@ This is the first time developing in Python, most of the tech stack I researched
 
 ## Reflection
 
-_What was hard? What did you learn? What would you do differently?_
+The hardest part about creating the API was that I chose a new tech stack that I have never tried before. I wasn't that familiar with Python not using any curly brackets and that formatting is really important to get the code working as you would expect.
+
+I learned new frameworks like FastAPI, SQLAlchemy for a relational database, PostgreSQL and I almost forgot (thanks to the clean code quiz I rembemered) to not mix high-level and low-level modules.
+I have not tried to seed data into a database before, use the ETL process to get the data that you want, transform it, then load it into the database.
+
+If I could go back with the knowledge I have now, I would structure my work better. I had a vision and a plan written down before hand but somewhere along the way I steered of course and that made things frustrating and I lost track of my vision for a bit. I would also recommend myself to read up on and learn more about the frameworks and libraries before hand.
 
 ## Acknowledgements
 
-_Resources, attributions, or shoutouts._
+**Resource used in this API:**
+
+- https://www.kaggle.com/datasets/fronkongames/steam-games-dataset
+- https://fastapi.tiangolo.com/
+- https://pandas.pydata.org/docs/
+- https://www.sqlalchemy.org/
+- https://docs.pydantic.dev/latest/
+- https://www.youtube.com/watch?v=qw--VYLpxG4&list=LL&index=10
+
+**Shoutout:**
+
+- https://www.postman.com/learn/
+
+Postman and their learning programs were great to get a better understanding on how to use Postman.
 
 ## Requirements
 

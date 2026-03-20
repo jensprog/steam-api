@@ -5,7 +5,11 @@ from app.schemas import GenreResponse, GenresListResponse, GenreQueryParameters
 from app.services.genre_service import get_genre_by_id, get_genres_list
 from app.utils.errors import not_found_error, unproccessable_entity_error
 
-""" Router for genre-related endpoints """
+"""
+Router for genre-related endpoints.
+
+Provides read-only access to genre information and their games.
+"""
 
 router = APIRouter(tags=["Genres"])
 

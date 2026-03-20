@@ -5,7 +5,12 @@ from app.schemas import GameResponse, DeveloperResponse
 from app.schemas.genre import GenreResponse
 from app.utils.hateoasbuilder import build_resource_links
 
-""" Utility functions for serializing database models into API response schemas """
+"""
+Utility functions for serializing database models into API response schemas.
+
+Converts SQLAlchemy models to Pydantic response models with optional
+HATEOAS links for resource navigation.
+"""
 
 
 def serialize_game(game: Game, include_links: bool = True) -> GameResponse:

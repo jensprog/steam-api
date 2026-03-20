@@ -5,7 +5,11 @@ from app.schemas import DeveloperResponse, DevelopersListResponse, DeveloperQuer
 from app.services.developer_service import get_developer_by_id, get_developers_list
 from app.utils.errors import not_found_error, unproccessable_entity_error
 
-""" Router for developer-related endpoints """
+"""
+Router for developer-related endpoints.
+
+Provides read-only access to developer information and their games.
+"""
 
 router = APIRouter(tags=["Developers"])
 

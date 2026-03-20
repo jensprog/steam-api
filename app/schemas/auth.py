@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 
-""" JSON structure for user registration endpoint """
+"""
+Pydantic models for authentication-related API schemas.
+
+Defines request/response models for user registration, login,
+and JWT token handling.
+"""
 
 
 class UserRegister(BaseModel):

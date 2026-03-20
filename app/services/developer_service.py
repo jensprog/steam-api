@@ -6,6 +6,12 @@ from app.schemas.developer import DevelopersListResponse, PaginationResponse, De
 from app.utils.serializers import serialize_developer
 from app.utils.hateoasbuilder import build_pagination_links
 
+"""
+Business logic for developer operations.
+
+Handles read-only developer operations with filtering and pagination.
+"""
+
 
 def get_developers_list(db: Session, params: DeveloperQueryParameters) -> DevelopersListResponse:
     query = db.query(Developer)

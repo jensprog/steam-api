@@ -2,6 +2,13 @@ from fastapi import HTTPException
 from typing import Any, Dict, Optional
 from app.schemas.error import ErrorResponse, ErrorCodes
 
+"""
+Utility functions for creating standardized HTTP error responses.
+
+Provides consistent error handling across all API endpoints
+with proper status codes and error structures.
+"""
+
 
 def create_http_exception(
     status_code: int, error_code: str, message: str, details: Optional[Dict[str, Any]] = None
@@ -57,4 +64,14 @@ def conflict_error(resource: str, reason: str) -> HTTPException:
         error_code=ErrorCodes.CONFLICT,
         message=f"Conflict with existing {resource}: {reason}",
         details={"resource": resource, "reason": reason},
+    )
+
+
+def unauthorized_error(message: str) -> HTTPException:
+    """Create a 401 error for authentication failures."""
+    return create_http_exception(
+        status_code=401,
+        error_code=ErrorCodes.UNAUTHORIZED,
+        message=message,
+        details={"WWW-Authenticate": "Bearer"},
     )

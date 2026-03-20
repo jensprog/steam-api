@@ -6,6 +6,12 @@ from app.schemas.genre import GenresListResponse, PaginationResponse, GenreQuery
 from app.utils.serializers import serialize_genres
 from app.utils.hateoasbuilder import build_pagination_links
 
+"""
+Business logic for genre operations.
+
+Handles read-only genre operations with filtering and pagination.
+"""
+
 
 def get_genres_list(db: Session, params: GenreQueryParameters) -> GenresListResponse:
     query = db.query(Genre)

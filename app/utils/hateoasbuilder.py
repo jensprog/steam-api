@@ -1,6 +1,13 @@
 from app.schemas import PaginationResponse
 from typing import Any
 
+"""
+Utility functions for building HATEOAS links.
+
+Generates hypermedia links for pagination and resource navigation
+according to REST HATEOAS principles.
+"""
+
 
 def build_pagination_links(base_url: str, page: int, limit: int, pagination: PaginationResponse) -> dict:
     links = {"self": f"{base_url}?page={page}&limit={limit}"}

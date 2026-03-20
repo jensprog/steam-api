@@ -15,7 +15,13 @@ from app.services.game_service import (
     update_game,
 )
 
-""" Router for game-related endpoints """
+"""
+Router for game-related endpoints.
+
+Handles all HTTP endpoints for game CRUD operations including
+filterable listing, individual game retrieval, and authenticated
+create/update/delete operations.
+"""
 
 router = APIRouter(tags=["Games"])
 

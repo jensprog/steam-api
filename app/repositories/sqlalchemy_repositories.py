@@ -8,9 +8,15 @@ from app.repositories.interfaces import (
 from app.models.game import Game
 from app.schemas.game import GameCreate, GameUpdate, GameQueryParameters
 
+"""
+SQLAlchemy implementation of game repository interface.
+
+Handles database operations for games including CRUD operations,
+filtering, and many-to-many relationship management.
+"""
+
 
 class SQLAlchemyGameRepository(GameRepositoryInterface):
-    """SQLAlchemy implementation of GameRepositoryInterface"""
 
     def __init__(self, db: Session):
         self.db = db

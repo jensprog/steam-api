@@ -2,7 +2,11 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.schemas.game import PaginationResponse
 
-""" JSON structure for GET /developers/{id} endpoint"""
+"""
+Pydantic models for developer-related API response schemas.
+
+Defines read-only response models for developer endpoints.
+"""
 
 
 class DeveloperResponse(BaseModel):

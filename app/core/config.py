@@ -1,5 +1,12 @@
 from pydantic_settings import BaseSettings
 
+"""
+Configuration management for the Steam Games API.
+
+This module defines application settings using Pydantic BaseSettings
+for environment variable management and validation.
+"""
+
 
 class Settings(BaseSettings):
     DATABASE_URL: str

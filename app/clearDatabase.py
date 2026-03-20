@@ -12,7 +12,7 @@ db = SessionLocal()
 try:
     db.execute(text("TRUNCATE TABLE game_developers, game_genres, games, developers, genres RESTART IDENTITY CASCADE"))
     db.commit()
-    print("✅ Database cleared")
+    print("Database cleared")
 except Exception as e:
     db.rollback()
     print(f"Error: {e}")

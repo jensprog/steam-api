@@ -1,9 +1,15 @@
 from typing import Optional, Any, Dict
 from pydantic import BaseModel
 
+"""
+Standardized error response schemas for the Steam Games API.
+
+Defines consistent error structures and common error responses
+used across all API endpoints.
+"""
+
 
 class ErrorResponse(BaseModel):
-    """Standardized error response schema for API endpoints."""
 
     error_code: str
     message: str

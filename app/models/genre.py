@@ -3,6 +3,12 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 from app.models.game import game_genres
 
+"""
+Genre model for the Steam Games API.
+
+Defines the Genre entity with many-to-many relationship to Game.
+"""
+
 
 class Genre(Base):
     __tablename__ = "genres"

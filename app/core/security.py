@@ -2,12 +2,20 @@ from datetime import datetime, timedelta
 from typing import Optional
 import jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
 from app.core.config import settings
+from app.utils.errors import unauthorized_error
+
+"""
+Security utilities for JWT authentication and password handling.
+
+This module provides JWT token creation/verification, password hashing,
+and FastAPI dependency for user authentication.
+"""
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 security = HTTPBearer()
@@ -50,16 +58,8 @@ def get_current_user(
     token = credentials.credentials
     username = verify_token(token)
     if username is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise unauthorized_error("Invalid authentication credentials")
     user = db.query(User).filter(User.username == username).first()
     if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise unauthorized_error("User not found")
     return user

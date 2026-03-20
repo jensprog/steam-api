@@ -5,7 +5,11 @@ from app.schemas.auth import UserLogin, UserRegister, TokenResponse
 from app.services.register_service import register_user
 from app.services.login_service import authenticate_user
 
-""" Router for authentication-related endpoints """
+"""
+Router for authentication-related endpoints.
+
+Provides user registration and login endpoints with JWT token generation.
+"""
 
 router = APIRouter(tags=["Authentication"])
 

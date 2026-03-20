@@ -2,7 +2,11 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.schemas.game import PaginationResponse
 
-""" JSON structure for GET /genres/{id} endpoint"""
+"""
+Pydantic models for genre-related API response schemas.
+
+Defines read-only response models for genre endpoints.
+"""
 
 
 class GenreResponse(BaseModel):

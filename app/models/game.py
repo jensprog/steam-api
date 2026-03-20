@@ -2,6 +2,13 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, Text, Table, For
 from sqlalchemy.orm import relationship
 from app.database import Base
 
+"""
+Game model and association tables for the Steam Games API.
+
+Defines the Game entity with many-to-many relationships to
+Developer and Genre entities through association tables.
+"""
+
 game_developers = Table(
     "game_developers",
     Base.metadata,

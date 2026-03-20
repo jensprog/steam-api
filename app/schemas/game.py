@@ -1,7 +1,12 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
-""" JSON structure for POST /games endpoint"""
+"""
+Pydantic models for game-related API request/response schemas.
+
+Defines data validation and serialization models for game endpoints
+including creation, updates, responses, and query parameters.
+"""
 
 
 class GameCreate(BaseModel):

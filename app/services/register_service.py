@@ -1,9 +1,16 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from app.models.user import User
 from app.schemas.auth import UserRegister
 from app.core.security import get_password_hash
+from app.utils.errors import validation_error
+
+"""
+User registration service.
+
+Handles new user creation with password hashing and
+duplicate username validation.
+"""
 
 
 def register_user(db: Session, user_data: UserRegister) -> User:
@@ -16,4 +23,6 @@ def register_user(db: Session, user_data: UserRegister) -> User:
         return new_user
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
+        raise validation_error(
+            "username", user_data.username, "Username already exists. Please choose a different username."
+        )
