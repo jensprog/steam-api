@@ -38,7 +38,6 @@ class GameRepositoryInterface(ABC):
         pass
 
 
-
 class RepositoryError(Exception):
     """Base exception for repository layer errors"""
 
