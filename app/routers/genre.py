@@ -14,7 +14,7 @@ Provides read-only access to genre information and their games.
 router = APIRouter(tags=["Genres"])
 
 
-@router.get("/", response_model=GenresListResponse, status_code=status.HTTP_200_OK)
+@router.get("", response_model=GenresListResponse, status_code=status.HTTP_200_OK)
 def get_genres(
     params: GenreQueryParameters = Depends(),
     db: Session = Depends(get_db),

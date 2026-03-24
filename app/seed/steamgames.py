@@ -13,7 +13,10 @@ from src.transformer import (  # noqa: E402
     extract_developers,
     extract_genres,
 )
-from app.database import SessionLocal  # noqa: E402
+from app.database import SessionLocal, engine, Base  # noqa: E402
+
+# Create all tables if they don't exist
+Base.metadata.create_all(bind=engine)
 
 logger.info("Starting data extraction...")
 df = extract_games_json("data/games.json")

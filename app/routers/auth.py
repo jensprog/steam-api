@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.auth import UserLogin, UserRegister, TokenResponse
 from app.services.register_service import register_user
 from app.services.login_service import authenticate_user
+from app.services.oauth_service import get_google_oauth_url, handle_google_callback
 
 """
 Router for authentication-related endpoints.
@@ -23,3 +25,16 @@ def register(user_data: UserRegister, db: Session = Depends(get_db)):
 @router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 def login(login_data: UserLogin, db: Session = Depends(get_db)) -> TokenResponse:
     return authenticate_user(db, login_data)
+
+
+@router.get("/google")
+def google_login():
+    """Initiate Google OAuth login."""
+    authorization_url = get_google_oauth_url()
+    return RedirectResponse(url=authorization_url)
+
+
+@router.get("/google/callback", response_model=TokenResponse)
+def google_callback(code: str = Query(...), db: Session = Depends(get_db)):
+    """Handle Google OAuth callback and return JWT token."""
+    return handle_google_callback(db, code)

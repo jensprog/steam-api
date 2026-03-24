@@ -14,7 +14,7 @@ Provides read-only access to developer information and their games.
 router = APIRouter(tags=["Developers"])
 
 
-@router.get("/", response_model=DevelopersListResponse, status_code=status.HTTP_200_OK)
+@router.get("", response_model=DevelopersListResponse, status_code=status.HTTP_200_OK)
 def get_developers(
     params: DeveloperQueryParameters = Depends(),
     db: Session = Depends(get_db),

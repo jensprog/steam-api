@@ -31,7 +31,7 @@ def get_game_repository(db: Session = Depends(get_db)) -> GameRepositoryInterfac
     return SQLAlchemyGameRepository(db)
 
 
-@router.get("/", response_model=GamesListResponse, status_code=status.HTTP_200_OK)
+@router.get("", response_model=GamesListResponse, status_code=status.HTTP_200_OK)
 def get_games(
     params: GameQueryParameters = Depends(),
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
@@ -59,7 +59,7 @@ def get_game_price(id: int, game_repo: GameRepositoryInterface = Depends(get_gam
     return {"price": game.price}
 
 
-@router.post("/", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
 def create_one_game(
     game_data: GameCreate,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),

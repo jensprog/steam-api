@@ -10,7 +10,7 @@ os.chdir(str(Path(__file__).parent.parent))
 
 db = SessionLocal()
 try:
-    db.execute(text("TRUNCATE TABLE game_developers, game_genres, games, developers, genres RESTART IDENTITY CASCADE"))
+    db.execute(text("DROP TABLE IF EXISTS game_developers, game_genres, users, games, developers, genres CASCADE"))
     db.commit()
     print("Database cleared")
 except Exception as e:

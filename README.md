@@ -114,7 +114,7 @@ This will load 15.000 games with their associated developers and genres from the
 To clear the database before re-seeding:
 
 ```bash
-python app/clearDatabase.py
+python -m app.clearDatabase
 ```
 
 ## Implementation Type
