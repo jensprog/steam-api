@@ -13,7 +13,7 @@ class UserRegister(BaseModel):
     username: str
     password: str
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def sanitize_username(cls, username_value):
         if username_value:
@@ -28,7 +28,7 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def sanitize_username(cls, username_value):
         if username_value:

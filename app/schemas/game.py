@@ -23,28 +23,28 @@ class GameCreate(BaseModel):
     positive: int = 0
     negative: int = 0
 
-    @field_validator('name')
+    @field_validator("name")
     @classmethod
     def sanitize_name(cls, name_value):
         if name_value:
             return html.escape(name_value.strip())
         return name_value
 
-    @field_validator('short_description')
+    @field_validator("short_description")
     @classmethod
     def sanitize_description(cls, description_value):
         if description_value:
             return html.escape(description_value.strip())
         return description_value
 
-    @field_validator('app_id')
+    @field_validator("app_id")
     @classmethod
     def sanitize_app_id(cls, app_id_value):
         if app_id_value:
             return html.escape(app_id_value.strip())
         return app_id_value
 
-    @field_validator('release_date')
+    @field_validator("release_date")
     @classmethod
     def sanitize_release_date(cls, date_value):
         if date_value:
@@ -126,21 +126,21 @@ class GameUpdate(BaseModel):
     positive: Optional[int] = None
     negative: Optional[int] = None
 
-    @field_validator('name')
+    @field_validator("name")
     @classmethod
     def sanitize_name(cls, name_value):
         if name_value:
             return html.escape(name_value.strip())
         return name_value
 
-    @field_validator('short_description')
+    @field_validator("short_description")
     @classmethod
     def sanitize_description(cls, description_value):
         if description_value:
             return html.escape(description_value.strip())
         return description_value
 
-    @field_validator('release_date')
+    @field_validator("release_date")
     @classmethod
     def sanitize_release_date(cls, date_value):
         if date_value:
