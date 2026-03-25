@@ -1,10 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from app.database import engine, Base
 from app.routers import game, developer, genre, auth
+from app.core.rate_limit import limiter, rate_limit_handler
+from slowapi.errors import RateLimitExceeded
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Steam Games API", version="1.0.0")
+
+# Add rate limiting state and exception handler
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 app.include_router(game.router, prefix="/games")
 app.include_router(developer.router, prefix="/developers")
@@ -13,7 +19,8 @@ app.include_router(auth.router, prefix="/auth")
 
 
 @app.get("/")
-def root():
+@limiter.limit("10/minute")
+def root(request: Request):
     return {
         "message": "Welcome to the Steam Games API!",
         "links": [

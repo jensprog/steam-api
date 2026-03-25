@@ -75,3 +75,12 @@ def unauthorized_error(message: str) -> HTTPException:
         message=message,
         details={"WWW-Authenticate": "Bearer"},
     )
+
+
+def too_many_requests_error(message: str) -> HTTPException:
+    """Create a 429 error for rate limit exceeded."""
+    return create_http_exception(
+        status_code=429,
+        error_code=ErrorCodes.TOO_MANY_REQUESTS,
+        message=message,
+    )

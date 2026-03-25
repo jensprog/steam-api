@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.security import get_current_user
+from app.core.rate_limit import limiter
 from app.models.user import User
 from app.repositories.interfaces import GameRepositoryInterface
 from app.repositories.sqlalchemy_repositories import SQLAlchemyGameRepository
@@ -60,7 +61,9 @@ def get_game_price(id: int, game_repo: GameRepositoryInterface = Depends(get_gam
 
 
 @router.post("", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute")
 def create_one_game(
+    request: Request,
     game_data: GameCreate,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
     _current_user: User = Depends(get_current_user),
@@ -69,8 +72,10 @@ def create_one_game(
 
 
 @router.put("/{id}", response_model=GameResponse, status_code=status.HTTP_200_OK)
+@limiter.limit("15/minute")
 def update_one_game(
     id: int,
+    request: Request,
     game_data: GameUpdate,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
     _current_user: User = Depends(get_current_user),
@@ -84,8 +89,10 @@ def update_one_game(
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@limiter.limit("5/minute")
 def delete_one_game(
     id: int,
+    request: Request,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
     _current_user: User = Depends(get_current_user),
 ):
