@@ -39,8 +39,11 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
 
         return games, total_games
 
-    def save(self, game_data: GameCreate) -> Game:
-        new_game = Game(**game_data.model_dump())
+    def save(self, game_data: GameCreate, owner_id: Optional[int] = None) -> Game:
+        game_dict = game_data.model_dump()
+        if owner_id is not None:
+            game_dict["owner_id"] = owner_id
+        new_game = Game(**game_dict)
         try:
             self.db.add(new_game)
             self.db.commit()

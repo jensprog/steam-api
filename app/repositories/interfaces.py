@@ -23,7 +23,7 @@ class GameRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def save(self, game_data: GameCreate) -> Game:
+    def save(self, game_data: GameCreate, owner_id: Optional[int] = None) -> Game:
         """Save a new game"""
         pass
 

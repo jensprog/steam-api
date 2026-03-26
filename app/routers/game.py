@@ -66,9 +66,9 @@ def create_one_game(
     request: Request,
     game_data: GameCreate,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
-    _current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ) -> GameResponse:
-    return create_game(game_repo, game_data)
+    return create_game(game_repo, game_data, current_user.id)
 
 
 @router.put("/{id}", response_model=GameResponse, status_code=status.HTTP_200_OK)
@@ -78,11 +78,11 @@ def update_one_game(
     request: Request,
     game_data: GameUpdate,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
-    _current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ) -> GameResponse:
     if id <= 0:
         raise unproccessable_entity_error("id", id, "ID must be a positive integer.")
-    updated_game = update_game(game_repo, id, game_data)
+    updated_game = update_game(game_repo, id, game_data, current_user.id)
     if not updated_game:
         raise not_found_error("game", id)
     return updated_game
@@ -94,10 +94,10 @@ def delete_one_game(
     id: int,
     request: Request,
     game_repo: GameRepositoryInterface = Depends(get_game_repository),
-    _current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
     if id <= 0:
         raise unproccessable_entity_error("id", id, "ID must be a positive integer.")
-    deleted = delete_game(game_repo, id)
+    deleted = delete_game(game_repo, id, current_user.id)
     if not deleted:
         raise not_found_error("game", id)

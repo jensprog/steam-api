@@ -3,7 +3,7 @@ from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game
 from app.utils.hateoasbuilder import build_pagination_links
-from app.utils.errors import validation_error
+from app.utils.errors import validation_error, forbidden_error
 
 """
 Business logic for game operations.
@@ -40,15 +40,22 @@ def get_game_by_id(game_repo: GameRepositoryInterface, game_id: int) -> GameResp
     return serialize_game(game)
 
 
-def create_game(game_repo: GameRepositoryInterface, game_data: GameCreate) -> GameResponse:
+def create_game(game_repo: GameRepositoryInterface, game_data: GameCreate, owner_id: int) -> GameResponse:
     try:
-        new_game = game_repo.save(game_data)
+        new_game = game_repo.save(game_data, owner_id)
         return serialize_game(new_game)
     except RepositoryError as e:
         raise validation_error("game", game_data, str(e))
 
 
-def update_game(game_repo: GameRepositoryInterface, game_id: int, game_data: GameUpdate) -> GameResponse | None:
+def update_game(
+    game_repo: GameRepositoryInterface, game_id: int, game_data: GameUpdate, owner_id: int
+) -> GameResponse | None:
+    existing_game = game_repo.find_by_id(game_id)
+    if not existing_game:
+        return None
+    if existing_game.owner_id is not None and existing_game.owner_id != owner_id:
+        raise forbidden_error("You do not have permission to update this game.")
     try:
         game = game_repo.update(game_id, game_data)
         if not game:
@@ -58,7 +65,12 @@ def update_game(game_repo: GameRepositoryInterface, game_id: int, game_data: Gam
         raise validation_error("game", game_data, str(e))
 
 
-def delete_game(game_repo: GameRepositoryInterface, game_id: int) -> bool:
+def delete_game(game_repo: GameRepositoryInterface, game_id: int, owner_id: int) -> bool:
+    existing_game = game_repo.find_by_id(game_id)
+    if not existing_game:
+        return False
+    if existing_game.owner_id is not None and existing_game.owner_id != owner_id:
+        raise forbidden_error("You do not have permission to delete this game.")
     try:
         return game_repo.remove(game_id)
     except RepositoryError as e:

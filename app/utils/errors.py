@@ -84,3 +84,12 @@ def too_many_requests_error(message: str) -> HTTPException:
         error_code=ErrorCodes.TOO_MANY_REQUESTS,
         message=message,
     )
+
+
+def forbidden_error(message: str) -> HTTPException:
+    """Create a 403 error for forbidden access."""
+    return create_http_exception(
+        status_code=403,
+        error_code=ErrorCodes.FORBIDDEN,
+        message=message,
+    )

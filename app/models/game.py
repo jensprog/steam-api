@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, Text, Table, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.database import Base
+from typing import Optional
 
 """
 Game model and association tables for the Steam Games API.
@@ -42,6 +43,8 @@ class Game(Base):
     average_playtime_forever = Column(Integer, default=0)
     estimated_owners = Column(String)
     header_image = Column(String)
+    owner_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
 
     developers = relationship("Developer", secondary=game_developers, back_populates="games")
     genres = relationship("Genre", secondary=game_genres, back_populates="games")
+    owner = relationship("User", back_populates="owned_games")
