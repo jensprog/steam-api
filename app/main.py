@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routers import game, developer, genre, auth
 from app.core.rate_limit import limiter, rate_limit_handler
@@ -7,6 +8,14 @@ from slowapi.errors import RateLimitExceeded
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Steam Games API", version="1.0.0")
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow localhost for frontend development
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Add rate limiting state and exception handler
 app.state.limiter = limiter
