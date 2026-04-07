@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, Query, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from app.core.rate_limit import limiter
+from app.core.security import get_current_user
 from app.database import get_db
 from app.schemas.auth import UserLogin, UserRegister, TokenResponse
 from app.services.register_service import register_user
@@ -41,3 +42,9 @@ def google_login():
 def google_callback(code: str = Query(...), db: Session = Depends(get_db)):
     """Handle Google OAuth callback and return JWT token."""
     return handle_google_callback(db, code)
+
+
+@router.get("/me")
+def get_current_user_info(current_user=Depends(get_current_user)):
+    """Get current authenticated user's info."""
+    return {"username": current_user.username, "email": current_user.email}
