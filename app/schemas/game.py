@@ -19,9 +19,8 @@ class GameCreate(BaseModel):
     windows: bool = False
     mac: bool = False
     linux: bool = False
-    metacritic_score: int = 0
-    positive: int = 0
-    negative: int = 0
+    developers: List[str] = []
+    genres: List[str] = []
 
     @field_validator("name")
     @classmethod
@@ -122,6 +121,8 @@ class GameUpdate(BaseModel):
     windows: Optional[bool] = None
     mac: Optional[bool] = None
     linux: Optional[bool] = None
+    developers: Optional[List[str]] = None
+    genres: Optional[List[str]] = None
     metacritic_score: Optional[int] = None
     positive: Optional[int] = None
     negative: Optional[int] = None

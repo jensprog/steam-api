@@ -6,6 +6,8 @@ from app.repositories.interfaces import (
     ConstraintViolationError,
 )
 from app.models.game import Game
+from app.models.developer import Developer
+from app.models.genre import Genre
 from app.schemas.game import GameCreate, GameUpdate, GameQueryParameters
 
 """
@@ -41,9 +43,28 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
 
     def save(self, game_data: GameCreate, owner_id: Optional[int] = None) -> Game:
         game_dict = game_data.model_dump()
+        game_dict.pop("developers", None)
+        game_dict.pop("genres", None)
         if owner_id is not None:
             game_dict["owner_id"] = owner_id
         new_game = Game(**game_dict)
+
+        for name in game_data.developers:
+            dev = self.db.query(Developer).filter(Developer.name == name).first()
+            if not dev:
+                dev = Developer(name=name)
+                self.db.add(dev)
+                self.db.flush()
+            new_game.developers.append(dev)
+
+        for name in game_data.genres:
+            genre = self.db.query(Genre).filter(Genre.name == name).first()
+            if not genre:
+                genre = Genre(name=name)
+                self.db.add(genre)
+                self.db.flush()
+            new_game.genres.append(genre)
+
         try:
             self.db.add(new_game)
             self.db.commit()
@@ -58,9 +79,32 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
         if not game:
             return None
 
-        for key, value in game_data.model_dump(exclude_unset=True).items():
+        game_dict = game_data.model_dump(exclude_unset=True)
+        game_dict.pop("developers", None)
+        game_dict.pop("genres", None)
+
+        for key, value in game_dict.items():
             setattr(game, key, value)
 
+        if game_data.developers is not None:
+            game.developers.clear()
+            for name in game_data.developers:
+                dev = self.db.query(Developer).filter(Developer.name == name).first()
+                if not dev:
+                    dev = Developer(name=name)
+                    self.db.add(dev)
+                    self.db.flush()
+                game.developers.append(dev)
+
+        if game_data.genres is not None:
+            game.genres.clear()
+            for name in game_data.genres:
+                genre = self.db.query(Genre).filter(Genre.name == name).first()
+                if not genre:
+                    genre = Genre(name=name)
+                    self.db.add(genre)
+                    self.db.flush()
+                game.genres.append(genre)
         try:
             self.db.commit()
             self.db.refresh(game)
