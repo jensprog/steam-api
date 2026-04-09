@@ -37,7 +37,7 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
             query = query.filter(Game.name.ilike(f"%{params.search}%"))
 
         total_games = query.count()
-        games = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
+        games = query.order_by(Game.id).limit(params.limit).offset((params.page - 1) * params.limit).all()
 
         return games, total_games
 
