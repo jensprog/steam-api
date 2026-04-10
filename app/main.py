@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import game, developer, genre, auth
+from app.routers import game, developer, genre, auth, stats
 from app.core.rate_limit import limiter, rate_limit_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -21,6 +21,7 @@ app.add_middleware(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
+app.include_router(stats.router, prefix="/stats")
 app.include_router(game.router, prefix="/games")
 app.include_router(developer.router, prefix="/developers")
 app.include_router(genre.router, prefix="/genres")
