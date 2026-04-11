@@ -4,7 +4,7 @@ from app.models import Game
 
 def get_games_by_price(db: Session):
     games_with_price = db.query(Game.name, Game.price).filter(Game.price != None).all()  # noqa: E711
-    price_sort_dict = {"Free": 0, "Under $10": 0, "$10-30": 0, "Over $30": 0}
+    price_sort_dict = {"Free / NA": 0, "Under $10": 0, "$10-30": 0, "Over $30": 0}
 
     for price in games_with_price:
         if price.price == 0:
@@ -22,7 +22,7 @@ def get_games_by_amount_of_players(db: Session):
     games_with_players = (
         db.query(Game.name, Game.estimated_owners).filter(Game.estimated_owners != None).all()  # noqa: E711
     )
-    sort_estimated_players = {"No Owners": 0, "Under 50k": 0, "50k-200k": 0, "200k-1M": 0, "Over 1M": 0}
+    sort_estimated_players = {"No Owners / NA": 0, "Under 50k": 0, "50k-200k": 0, "200k-1M": 0, "Over 1M": 0}
 
     for estimated_owners in games_with_players:
         lower = int(
