@@ -8,7 +8,7 @@ def get_games_by_price(db: Session):
 
     for price in games_with_price:
         if price.price == 0:
-            price_sort_dict["Free"] += 1
+            price_sort_dict["Free / NA"] += 1
         elif price.price > 0 and price.price < 10:
             price_sort_dict["Under $10"] += 1
         elif price.price >= 10 and price.price <= 30:
@@ -32,7 +32,7 @@ def get_games_by_amount_of_players(db: Session):
         )
 
         if lower == 0:
-            sort_estimated_players["No Owners"] += 1
+            sort_estimated_players["No Owners / NA"] += 1
         elif lower < 50000:
             sort_estimated_players["Under 50k"] += 1
         elif lower < 200000:
