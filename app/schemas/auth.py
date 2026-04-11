@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-import html
+from app.utils.validator import parse_username
 
 """
 Pydantic models for authentication-related API schemas.
@@ -15,10 +15,8 @@ class UserRegister(BaseModel):
 
     @field_validator("username")
     @classmethod
-    def sanitize_username(cls, username_value):
-        if username_value:
-            return html.escape(username_value.strip())
-        return username_value
+    def validate_username(cls, username_value):
+        return parse_username(username_value)
 
 
 """ JSON structure for user login endpoint """
@@ -30,10 +28,8 @@ class UserLogin(BaseModel):
 
     @field_validator("username")
     @classmethod
-    def sanitize_username(cls, username_value):
-        if username_value:
-            return html.escape(username_value.strip())
-        return username_value
+    def validate_username(cls, username_value):
+        return parse_username(username_value)
 
 
 """ JSON structure for token response """
