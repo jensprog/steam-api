@@ -54,7 +54,7 @@ def update_game(
     existing_game = game_repo.find_by_id(game_id)
     if not existing_game:
         return None
-    if existing_game.owner_id is not None and existing_game.owner_id != owner_id:
+    if existing_game.owner_id != owner_id:
         raise forbidden_error("You do not have permission to update this game.")
     try:
         game = game_repo.update(game_id, game_data)
@@ -69,7 +69,7 @@ def delete_game(game_repo: GameRepositoryInterface, game_id: int, owner_id: int)
     existing_game = game_repo.find_by_id(game_id)
     if not existing_game:
         return False
-    if existing_game.owner_id is not None and existing_game.owner_id != owner_id:
+    if existing_game.owner_id != owner_id:
         raise forbidden_error("You do not have permission to delete this game.")
     try:
         return game_repo.remove(game_id)
