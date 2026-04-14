@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models import Game, game_genres, Genre
 from app.schemas import GenreWithGameCount, GenresByGamesResponse
-from sqlalchemy import func
+from sqlalchemy import func, desc
 
 """ Fetches games and their price to be sorted in a pie chart in the frontend application """
 
@@ -60,6 +60,7 @@ def get_genres_with_game_count(db: Session):
         db.query(Genre.name, func.count(game_genres.c.game_id).label("game_count"))
         .join(game_genres)
         .group_by(Genre.name)
+        .order_by(desc(func.count(game_genres.c.game_id)))
         .all()
     )
 
