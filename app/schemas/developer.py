@@ -42,3 +42,5 @@ class DeveloperWithGameCount(BaseModel):
 
 class DevelopersWithGamesResponse(BaseModel):
     developers: List[DeveloperWithGameCount]
+    pagination: PaginationResponse
+    links: dict = {}

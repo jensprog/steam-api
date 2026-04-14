@@ -1,7 +1,15 @@
 from sqlalchemy.orm import Session
 from app.models import Game, game_genres, game_developers, Genre, Developer
-from app.schemas import GenreWithGameCount, GenresWithGamesResponse, DeveloperWithGameCount, DevelopersWithGamesResponse
+from app.schemas import (
+    GenreWithGameCount,
+    GenresWithGamesResponse,
+    DeveloperWithGameCount,
+    DevelopersWithGamesResponse,
+    DeveloperQueryParameters,
+    PaginationResponse,
+)
 from sqlalchemy import func, desc
+from app.utils.hateoasbuilder import build_pagination_links
 
 """ Fetches games and their price to be sorted in a pie chart in the frontend application """
 
@@ -71,17 +79,32 @@ def get_genres_with_game_count(db: Session):
     return GenresWithGamesResponse(genres=genres_with_games)
 
 
-def get_developers_with_game_count(db: Session):
+def get_developers_with_game_count(db: Session, params: DeveloperQueryParameters):
     developers_with_game_count = (
         db.query(Developer.name, func.count(game_developers.c.game_id).label("game_count"))
         .join(game_developers)
         .group_by(Developer.name)
         .order_by(desc(func.count(game_developers.c.game_id)))
+        .limit(params.limit)
+        .offset((params.page - 1) * params.limit)
         .all()
     )
+
+    total_developers_with_games = db.query(func.count(Developer.id.distinct())).scalar()
+    pages = (total_developers_with_games + params.limit - 1) // params.limit
+    pagination = PaginationResponse(
+        page=params.page,
+        limit=params.limit,
+        total=total_developers_with_games,
+        pages=pages,
+        has_next=params.page < pages,
+        has_previous=params.page > 1,
+    )
+
+    links = build_pagination_links("/developers/by-games", params.page, params.limit, pagination)
 
     developers_with_games = []
 
     for row in developers_with_game_count:
         developers_with_games.append(DeveloperWithGameCount(name=row.name, game_count=row.game_count))
-    return DevelopersWithGamesResponse(developers=developers_with_games)
+    return DevelopersWithGamesResponse(developers=developers_with_games, pagination=pagination, links=links)
