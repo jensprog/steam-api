@@ -33,3 +33,12 @@ class DevelopersListResponse(BaseModel):
     developers: List[DeveloperResponse]
     pagination: PaginationResponse
     links: dict = {}
+
+
+class DeveloperWithGameCount(BaseModel):
+    name: str
+    game_count: int
+
+
+class DevelopersWithGamesResponse(BaseModel):
+    developers: List[DeveloperWithGameCount]

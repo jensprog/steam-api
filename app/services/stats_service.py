@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models import Game, game_genres, Genre
-from app.schemas import GenreWithGameCount, GenresByGamesResponse
+from app.models import Game, game_genres, game_developers, Genre, Developer
+from app.schemas import GenreWithGameCount, GenresWithGamesResponse, DeveloperWithGameCount, DevelopersWithGamesResponse
 from sqlalchemy import func, desc
 
 """ Fetches games and their price to be sorted in a pie chart in the frontend application """
@@ -68,4 +68,20 @@ def get_genres_with_game_count(db: Session):
 
     for row in genre_with_game_count:
         genres_with_games.append(GenreWithGameCount(name=row.name, game_count=row.game_count))
-    return GenresByGamesResponse(genres=genres_with_games)
+    return GenresWithGamesResponse(genres=genres_with_games)
+
+
+def get_developers_with_game_count(db: Session):
+    developers_with_game_count = (
+        db.query(Developer.name, func.count(game_developers.c.game_id).label("game_count"))
+        .join(game_developers)
+        .group_by(Developer.name)
+        .order_by(desc(func.count(game_developers.c.game_id)))
+        .all()
+    )
+
+    developers_with_games = []
+
+    for row in developers_with_game_count:
+        developers_with_games.append(DeveloperWithGameCount(name=row.name, game_count=row.game_count))
+    return DevelopersWithGamesResponse(developers=developers_with_games)

@@ -6,8 +6,14 @@ from .game import (
     PaginationResponse,
     GameQueryParameters,
 )
-from .developer import DeveloperResponse, DevelopersListResponse, DeveloperQueryParameters
-from .genre import GenreResponse, GenresListResponse, GenreQueryParameters, GenreWithGameCount, GenresByGamesResponse
+from .developer import (
+    DeveloperResponse,
+    DevelopersListResponse,
+    DeveloperQueryParameters,
+    DeveloperWithGameCount,
+    DevelopersWithGamesResponse,
+)
+from .genre import GenreResponse, GenresListResponse, GenreQueryParameters, GenreWithGameCount, GenresWithGamesResponse
 from .auth import UserRegister, UserLogin, TokenResponse
 
 __all__ = [
@@ -20,11 +26,13 @@ __all__ = [
     "DeveloperResponse",
     "DevelopersListResponse",
     "DeveloperQueryParameters",
+    "DeveloperWithGameCount",
+    "DevelopersWithGamesResponse",
     "GenreResponse",
     "GenresListResponse",
     "GenreQueryParameters",
     "GenreWithGameCount",
-    "GenresByGamesResponse",
+    "GenresWithGamesResponse",
     "UserRegister",
     "UserLogin",
     "TokenResponse",

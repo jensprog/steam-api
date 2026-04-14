@@ -40,5 +40,5 @@ class GenreWithGameCount(BaseModel):
     game_count: int
 
 
-class GenresByGamesResponse(BaseModel):
+class GenresWithGamesResponse(BaseModel):
     genres: List[GenreWithGameCount]
