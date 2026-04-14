@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.services.stats_service import get_games_by_amount_of_players, get_games_by_price, get_genres_with_game_count
+from app.services.stats_service import (
+    get_games_by_amount_of_players,
+    get_games_by_price,
+    get_genres_with_game_count,
+    get_developers_with_game_count,
+)
 
 router = APIRouter(tags=["Stats"])
 
@@ -19,3 +24,8 @@ def get_games_by_player_amount(db: Session = Depends(get_db)):
 @router.get("/genre/by-games", status_code=status.HTTP_200_OK)
 def get_genres_by_games(db: Session = Depends(get_db)):
     return get_genres_with_game_count(db)
+
+
+@router.get("/developers/by-games", status_code=status.HTTP_200_OK)
+def get_developers_by_games(db: Session = Depends(get_db)):
+    return get_developers_with_game_count(db)
