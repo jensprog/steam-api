@@ -33,3 +33,12 @@ class GenresListResponse(BaseModel):
     genres: List[GenreResponse]
     pagination: PaginationResponse
     links: dict = {}
+
+
+class GenreWithGameCount(BaseModel):
+    name: str
+    game_count: int
+
+
+class GenresByGamesResponse(BaseModel):
+    genres: List[GenreWithGameCount]

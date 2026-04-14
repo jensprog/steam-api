@@ -1,5 +1,9 @@
 from sqlalchemy.orm import Session
-from app.models import Game
+from app.models import Game, game_genres, Genre
+from app.schemas import GenreWithGameCount, GenresByGamesResponse
+from sqlalchemy import func
+
+""" Fetches games and their price to be sorted in a pie chart in the frontend application """
 
 
 def get_games_by_price(db: Session):
@@ -16,6 +20,10 @@ def get_games_by_price(db: Session):
         else:
             price_sort_dict["Over $30"] += 1
     return [{"name": n, "value": v} for n, v in price_sort_dict.items()]
+
+
+""" Fetches games and the estimated amount of owners for all the games
+visualized in the frontend application in a bar chart """
 
 
 def get_games_by_amount_of_players(db: Session):
@@ -42,3 +50,21 @@ def get_games_by_amount_of_players(db: Session):
         else:
             sort_estimated_players["Over 1M"] += 1
     return [{"name": n, "value": v} for n, v in sort_estimated_players.items()]
+
+
+""" Fetching genres with their game count """
+
+
+def get_genres_with_game_count(db: Session):
+    genre_with_game_count = (
+        db.query(Genre.name, func.count(game_genres.c.game_id).label("game_count"))
+        .join(game_genres)
+        .group_by(Genre.name)
+        .all()
+    )
+
+    genres_with_games = []
+
+    for row in genre_with_game_count:
+        genres_with_games.append(GenreWithGameCount(name=row.name, game_count=row.game_count))
+    return GenresByGamesResponse(genres=genres_with_games)

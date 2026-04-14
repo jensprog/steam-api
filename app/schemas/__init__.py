@@ -7,7 +7,7 @@ from .game import (
     GameQueryParameters,
 )
 from .developer import DeveloperResponse, DevelopersListResponse, DeveloperQueryParameters
-from .genre import GenreResponse, GenresListResponse, GenreQueryParameters
+from .genre import GenreResponse, GenresListResponse, GenreQueryParameters, GenreWithGameCount, GenresByGamesResponse
 from .auth import UserRegister, UserLogin, TokenResponse
 
 __all__ = [
@@ -23,6 +23,8 @@ __all__ = [
     "GenreResponse",
     "GenresListResponse",
     "GenreQueryParameters",
+    "GenreWithGameCount",
+    "GenresByGamesResponse",
     "UserRegister",
     "UserLogin",
     "TokenResponse",
