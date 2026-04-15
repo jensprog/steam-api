@@ -67,7 +67,7 @@ def serialize_developer(developer: Developer, include_links: bool = True) -> Dev
     return DeveloperResponse(**developer_dict)
 
 
-def serialize_genres(genres: Genre, include_links: bool = True) -> GenreResponse:
+def serialize_genres(genres: Genre, include_links: bool = True, include_game_links: bool = True) -> GenreResponse:
     genre_dict = {
         "id": genres.id,
         "name": genres.name,
@@ -77,9 +77,10 @@ def serialize_genres(genres: Genre, include_links: bool = True) -> GenreResponse
     if include_links:
         genre_dict["links"] = build_resource_links("genres", genres.id, include_crud=False)
 
-        for game in genres.games:
-            genre_dict["links"].append(
-                {"rel": "related", "href": f"/games/{game.id}", "method": "GET", "title": f"Game: {game.name}"}
-            )
+        if include_game_links:
+            for game in genres.games:
+                genre_dict["links"].append(
+                    {"rel": "related", "href": f"/games/{game.id}", "method": "GET", "title": f"Game: {game.name}"}
+                )
 
     return GenreResponse(**genre_dict)
