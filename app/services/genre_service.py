@@ -25,7 +25,7 @@ def get_genres_list(db: Session, params: GenreQueryParameters) -> GenresListResp
     total_genres = query.count()
     genres = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
 
-    genre_responses = [serialize_genres(genre) for genre in genres]
+    genre_responses = [serialize_genres(genre, include_links=False) for genre in genres]
 
     pages = (total_genres + params.limit - 1) // params.limit
     pagination = PaginationResponse(
