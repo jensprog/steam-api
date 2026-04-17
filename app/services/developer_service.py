@@ -1,6 +1,4 @@
-from sqlalchemy.orm import Session
-from app.models.developer import Developer
-from app.models.game import Game
+from app.repositories.interfaces.developer_repository import DeveloperRepositoryInterface
 from app.schemas import DeveloperResponse
 from app.schemas.developer import DevelopersListResponse, PaginationResponse, DeveloperQueryParameters
 from app.utils.serializers import serialize_developer
@@ -13,17 +11,11 @@ Handles read-only developer operations with filtering and pagination.
 """
 
 
-def get_developers_list(db: Session, params: DeveloperQueryParameters) -> DevelopersListResponse:
-    query = db.query(Developer)
-    if params.search:
-        query = query.filter(Developer.name.ilike(f"%{params.search}%"))
-    if params.game:
-        query = query.filter(Developer.games.any(name=params.game))
-    if params.genre:
-        query = query.filter(Developer.games.any(Game.genres.any(name=params.genre)))
+def get_developers_list(
+    dev_repo: DeveloperRepositoryInterface, params: DeveloperQueryParameters
+) -> DevelopersListResponse:
 
-    total_developers = query.count()
-    developers = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
+    developers, total_developers = dev_repo.find_filtered(params)
 
     developer_responses = [serialize_developer(developer) for developer in developers]
 
@@ -42,8 +34,8 @@ def get_developers_list(db: Session, params: DeveloperQueryParameters) -> Develo
     return DevelopersListResponse(developers=developer_responses, pagination=pagination, links=links)
 
 
-def get_developer_by_id(db: Session, developer_id: int) -> DeveloperResponse | None:
-    developer = db.query(Developer).filter(Developer.id == developer_id).first()
+def get_developer_by_id(dev_repo: DeveloperRepositoryInterface, developer_id: int) -> DeveloperResponse | None:
+    developer = dev_repo.find_by_id(developer_id)
     if not developer:
         return None
     return serialize_developer(developer)

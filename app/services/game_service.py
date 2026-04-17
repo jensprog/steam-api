@@ -1,4 +1,5 @@
-from app.repositories.interfaces import GameRepositoryInterface, RepositoryError
+from app.repositories.interfaces.game_repository import GameRepositoryInterface
+from app.repositories.exceptions import RepositoryError
 from app.schemas import GamesListResponse, PaginationResponse
 from app.schemas.game import GameCreate, GameQueryParameters, GameResponse, GameUpdate
 from app.utils.serializers import serialize_game

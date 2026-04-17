@@ -1,10 +1,8 @@
 from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from app.repositories.interfaces import (
-    GameRepositoryInterface,
-    ConstraintViolationError,
-)
+from app.repositories.exceptions import ConstraintViolationError
+from app.repositories.interfaces.game_repository import GameRepositoryInterface
 from app.models.game import Game
 from app.models.developer import Developer
 from app.models.genre import Genre

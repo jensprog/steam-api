@@ -1,6 +1,4 @@
-from sqlalchemy.orm import Session
-from app.models.game import Game
-from app.models.genre import Genre
+from app.repositories.interfaces.genre_repository import GenreRepositoryInterface
 from app.schemas.genre import GenreDetailResponse, GenresListResponse, PaginationResponse, GenreQueryParameters
 from app.utils.serializers import serialize_genres
 from app.utils.hateoasbuilder import build_pagination_links
@@ -12,17 +10,8 @@ Handles read-only genre operations with filtering and pagination.
 """
 
 
-def get_genres_list(db: Session, params: GenreQueryParameters) -> GenresListResponse:
-    query = db.query(Genre)
-    if params.game:
-        query = query.filter(Genre.games.any(name=params.game))
-    if params.developer:
-        query = query.filter(Genre.games.any(Game.developers.any(name=params.developer)))
-    if params.search:
-        query = query.filter(Genre.name.ilike(f"%{params.search}%"))
-
-    total_genres = query.count()
-    genres = query.limit(params.limit).offset((params.page - 1) * params.limit).all()
+def get_genres_list(genre_repo: GenreRepositoryInterface, params: GenreQueryParameters) -> GenresListResponse:
+    genres, total_genres = genre_repo.find_filtered(params)
 
     genre_responses = [serialize_genres(genre, include_game_links=False) for genre in genres]
 
@@ -41,15 +30,15 @@ def get_genres_list(db: Session, params: GenreQueryParameters) -> GenresListResp
     return GenresListResponse(genres=genre_responses, pagination=pagination, links=links)
 
 
-def get_genre_by_id(db: Session, genre_id: int, params: GenreQueryParameters) -> GenreDetailResponse | None:
-    genre = db.query(Genre).filter(Genre.id == genre_id).first()
+def get_genre_by_id(
+    genre_repo: GenreRepositoryInterface, genre_id: int, params: GenreQueryParameters
+) -> GenreDetailResponse | None:
+
+    genre = genre_repo.find_by_id(genre_id)
     if not genre:
         return None
 
-    games = db.query(Game).filter(Game.genres.any(id=genre.id))
-
-    total_games = games.count()
-    games = games.limit(params.limit).offset((params.page - 1) * params.limit).all()
+    games, total_games = genre_repo.find_games_by_genre(genre_id, params)
 
     game_links = []
     for game in games:

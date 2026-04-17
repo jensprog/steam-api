@@ -36,15 +36,3 @@ class GameRepositoryInterface(ABC):
     def remove(self, game_id: int) -> bool:
         """Remove a game by ID"""
         pass
-
-
-class RepositoryError(Exception):
-    """Base exception for repository layer errors"""
-
-    pass
-
-
-class ConstraintViolationError(RepositoryError):
-    """Raised when database constraints are violated"""
-
-    pass
