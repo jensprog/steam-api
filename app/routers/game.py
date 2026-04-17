@@ -5,7 +5,7 @@ from app.core.security import get_current_user
 from app.core.rate_limit import limiter
 from app.models.user import User
 from app.repositories.interfaces.game_repository import GameRepositoryInterface
-from app.repositories.sqlalchemy.game_repositories import SQLAlchemyGameRepository
+from app.repositories.sqlalchemy.game_repository import SQLAlchemyGameRepository
 from app.schemas import GamesListResponse, GameResponse, GameCreate, GameUpdate, GameQueryParameters
 from app.utils.errors import not_found_error, unproccessable_entity_error
 from app.services.game_service import (

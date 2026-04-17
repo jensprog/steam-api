@@ -1,7 +1,7 @@
-from sqlalchemy.orm import Session
 from authlib.integrations.requests_client import OAuth2Session
 import requests
 from app.models.user import User
+from app.repositories.interfaces.user_repository import UserRepositoryInterface
 from app.schemas.auth import TokenResponse
 from app.core.security import create_access_token
 from app.core.config import settings
@@ -23,7 +23,7 @@ def get_google_oauth_url() -> str:
     return authorization_url
 
 
-def handle_google_callback(db: Session, code: str) -> TokenResponse:
+def handle_google_callback(user_repo: UserRepositoryInterface, code: str) -> TokenResponse:
     """Handle Google OAuth callback and create/login user."""
     # Exchange authorization code for access token
     client = OAuth2Session(settings.GOOGLE_CLIENT_ID, redirect_uri=settings.GOOGLE_REDIRECT_URI)
@@ -43,7 +43,7 @@ def handle_google_callback(db: Session, code: str) -> TokenResponse:
     user_info = user_info_response.json()
 
     # Find or create user
-    user = db.query(User).filter(User.email == user_info["email"]).first()
+    user = user_repo.find_by_email(user_info["email"])
 
     if not user:
         # Create new user from Google profile
@@ -51,7 +51,7 @@ def handle_google_callback(db: Session, code: str) -> TokenResponse:
         # Ensure username is unique
         counter = 1
         original_username = username
-        while db.query(User).filter(User.username == username).first():
+        while user_repo.find_by_username(username):
             username = f"{original_username}{counter}"
             counter += 1
 
@@ -62,9 +62,7 @@ def handle_google_callback(db: Session, code: str) -> TokenResponse:
             oauth_id=user_info["id"],
             password_hash=None,
         )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
+        user_repo.save(user)
 
     # Generate JWT token
     access_token = create_access_token(data={"sub": user.username})
