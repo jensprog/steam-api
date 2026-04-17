@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.repositories.interfaces.stats_repository import StatsRepositoryInterface
+from app.repositories.sqlalchemy.stats_repository import SQLAlchemyStatsRepository
 from app.schemas.developer import DeveloperQueryParameters
 from app.services.stats_service import (
     get_games_by_amount_of_players,
@@ -12,21 +14,28 @@ from app.services.stats_service import (
 router = APIRouter(tags=["Stats"])
 
 
+def get_stats_repository(db: Session = Depends(get_db)) -> StatsRepositoryInterface:
+    """Dependency injection for stats repository"""
+    return SQLAlchemyStatsRepository(db)
+
+
 @router.get("/games/by-price", status_code=status.HTTP_200_OK)
-def get_games_and_price(db: Session = Depends(get_db)):
-    return get_games_by_price(db)
+def get_games_and_price(stats_repo: StatsRepositoryInterface = Depends(get_stats_repository)):
+    return get_games_by_price(stats_repo)
 
 
 @router.get("/games/by-owners", status_code=status.HTTP_200_OK)
-def get_games_by_player_amount(db: Session = Depends(get_db)):
-    return get_games_by_amount_of_players(db)
+def get_games_by_player_amount(stats_repo: StatsRepositoryInterface = Depends(get_stats_repository)):
+    return get_games_by_amount_of_players(stats_repo)
 
 
 @router.get("/genres/by-games", status_code=status.HTTP_200_OK)
-def get_genres_by_games(db: Session = Depends(get_db)):
-    return get_genres_with_game_count(db)
+def get_genres_by_games(stats_repo: StatsRepositoryInterface = Depends(get_stats_repository)):
+    return get_genres_with_game_count(stats_repo)
 
 
 @router.get("/developers/by-games", status_code=status.HTTP_200_OK)
-def get_developers_by_games(params: DeveloperQueryParameters = Depends(), db: Session = Depends(get_db)):
-    return get_developers_with_game_count(db, params)
+def get_developers_by_games(
+    params: DeveloperQueryParameters = Depends(), stats_repo: StatsRepositoryInterface = Depends(get_stats_repository)
+):
+    return get_developers_with_game_count(stats_repo, params)

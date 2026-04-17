@@ -1,5 +1,4 @@
-from sqlalchemy.orm import Session
-from app.models import Game, game_genres, game_developers, Genre, Developer
+from app.repositories.interfaces.stats_repository import StatsRepositoryInterface
 from app.schemas import (
     GenreWithGameCount,
     GenresWithGamesResponse,
@@ -8,14 +7,13 @@ from app.schemas import (
     DeveloperQueryParameters,
     PaginationResponse,
 )
-from sqlalchemy import func, desc
 from app.utils.hateoasbuilder import build_pagination_links
 
 """ Fetches games and their price to be sorted in a pie chart in the frontend application """
 
 
-def get_games_by_price(db: Session):
-    games_with_price = db.query(Game.name, Game.price).filter(Game.price != None).all()  # noqa: E711
+def get_games_by_price(stats_repo: StatsRepositoryInterface):
+    games_with_price = stats_repo.get_games_with_price()
     price_sort_dict = {"Free / NA": 0, "Under $10": 0, "$10-30": 0, "Over $30": 0}
 
     for price in games_with_price:
@@ -34,10 +32,8 @@ def get_games_by_price(db: Session):
 visualized in the frontend application in a bar chart """
 
 
-def get_games_by_amount_of_players(db: Session):
-    games_with_players = (
-        db.query(Game.name, Game.estimated_owners).filter(Game.estimated_owners != None).all()  # noqa: E711
-    )
+def get_games_by_amount_of_players(stats_repo: StatsRepositoryInterface):
+    games_with_players = stats_repo.get_games_with_owners()
     sort_estimated_players = {"No Owners / NA": 0, "Under 50k": 0, "50k-200k": 0, "200k-1M": 0, "Over 1M": 0}
 
     for estimated_owners in games_with_players:
@@ -63,14 +59,8 @@ def get_games_by_amount_of_players(db: Session):
 """ Fetching genres with their game count """
 
 
-def get_genres_with_game_count(db: Session):
-    genre_with_game_count = (
-        db.query(Genre.name, func.count(game_genres.c.game_id).label("game_count"))
-        .join(game_genres)
-        .group_by(Genre.name)
-        .order_by(desc(func.count(game_genres.c.game_id)))
-        .all()
-    )
+def get_genres_with_game_count(stats_repo: StatsRepositoryInterface):
+    genre_with_game_count = stats_repo.get_genres_with_game_count()
 
     genres_with_games = []
 
@@ -79,18 +69,9 @@ def get_genres_with_game_count(db: Session):
     return GenresWithGamesResponse(genres=genres_with_games)
 
 
-def get_developers_with_game_count(db: Session, params: DeveloperQueryParameters):
-    developers_with_game_count = (
-        db.query(Developer.name, func.count(game_developers.c.game_id).label("game_count"))
-        .join(game_developers)
-        .group_by(Developer.name)
-        .order_by(desc(func.count(game_developers.c.game_id)))
-        .limit(params.limit)
-        .offset((params.page - 1) * params.limit)
-        .all()
-    )
+def get_developers_with_game_count(stats_repo: StatsRepositoryInterface, params: DeveloperQueryParameters):
+    rows, total_developers_with_games = stats_repo.get_developers_with_game_count(params)
 
-    total_developers_with_games = db.query(func.count(Developer.id.distinct())).scalar()
     pages = (total_developers_with_games + params.limit - 1) // params.limit
     pagination = PaginationResponse(
         page=params.page,
@@ -105,6 +86,6 @@ def get_developers_with_game_count(db: Session, params: DeveloperQueryParameters
 
     developers_with_games = []
 
-    for row in developers_with_game_count:
+    for row in rows:
         developers_with_games.append(DeveloperWithGameCount(name=row.name, game_count=row.game_count))
     return DevelopersWithGamesResponse(developers=developers_with_games, pagination=pagination, links=links)
