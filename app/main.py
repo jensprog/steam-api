@@ -3,6 +3,10 @@ from app.database import engine, Base
 from app.routers import game, developer, genre, auth, stats
 from app.core.rate_limit import limiter, rate_limit_handler
 from slowapi.errors import RateLimitExceeded
+from app.core.config import settings
+from fastapi.middleware.cors import CORSMiddleware
+
+cors_origins = settings.CORS_ORIGINS.split(",")
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,6 +21,14 @@ app.include_router(game.router, prefix="/games")
 app.include_router(developer.router, prefix="/developers")
 app.include_router(genre.router, prefix="/genres")
 app.include_router(auth.router, prefix="/auth")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
