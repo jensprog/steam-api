@@ -12,3 +12,4 @@ src/
 pyproject.toml
 README.md
 TESTING.md
+kaniko/

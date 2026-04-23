@@ -21,3 +21,6 @@ data/
 # Database
 *.db
 *.sqlite3
+
+# Kaniko
+kaniko/
