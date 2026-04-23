@@ -1,0 +1,14 @@
+venv/
+__pycache__/
+*.pyc
+.env
+tests/
+data/
+src/
+*.postman_collection.json
+*.postman_environment.json
+.git/
+.vscode/
+pyproject.toml
+README.md
+TESTING.md

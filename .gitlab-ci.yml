@@ -1,6 +1,7 @@
 stages:
   - lint
   - test
+  - build
 
 code-quality:
   stage: lint
@@ -33,3 +34,15 @@ api-tests:
     - python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000 &
     - sleep 10
     - newman run SteamAPI.postman_collection.json --environment localhost.postman_environment.json
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE .
+    - docker push $CI_REGISTRY_IMAGE
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
