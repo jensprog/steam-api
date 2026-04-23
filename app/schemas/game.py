@@ -1,6 +1,5 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel
 from typing import List, Optional
-import html
 
 """
 Pydantic models for game-related API request/response schemas.
@@ -21,34 +20,6 @@ class GameCreate(BaseModel):
     linux: bool = False
     developers: List[str] = []
     genres: List[str] = []
-
-    @field_validator("name")
-    @classmethod
-    def sanitize_name(cls, name_value):
-        if name_value:
-            return html.escape(name_value.strip())
-        return name_value
-
-    @field_validator("short_description")
-    @classmethod
-    def sanitize_description(cls, description_value):
-        if description_value:
-            return html.escape(description_value.strip())
-        return description_value
-
-    @field_validator("app_id")
-    @classmethod
-    def sanitize_app_id(cls, app_id_value):
-        if app_id_value:
-            return html.escape(app_id_value.strip())
-        return app_id_value
-
-    @field_validator("release_date")
-    @classmethod
-    def sanitize_release_date(cls, date_value):
-        if date_value:
-            return html.escape(date_value.strip())
-        return date_value
 
 
 """ JSON structure for GET /games/{id} endpoint"""
@@ -126,24 +97,3 @@ class GameUpdate(BaseModel):
     metacritic_score: Optional[int] = None
     positive: Optional[int] = None
     negative: Optional[int] = None
-
-    @field_validator("name")
-    @classmethod
-    def sanitize_name(cls, name_value):
-        if name_value:
-            return html.escape(name_value.strip())
-        return name_value
-
-    @field_validator("short_description")
-    @classmethod
-    def sanitize_description(cls, description_value):
-        if description_value:
-            return html.escape(description_value.strip())
-        return description_value
-
-    @field_validator("release_date")
-    @classmethod
-    def sanitize_release_date(cls, date_value):
-        if date_value:
-            return html.escape(date_value.strip())
-        return date_value
