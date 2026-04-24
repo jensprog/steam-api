@@ -9,6 +9,9 @@ src/
 *.postman_environment.json
 .git/
 .vscode/
+.gitlab-ci.yml
+Dockerfile
+.dockerignore
 pyproject.toml
 README.md
 TESTING.md
