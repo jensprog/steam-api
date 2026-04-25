@@ -169,7 +169,7 @@ JWT authentication was a requirement for this project. The implementation follow
 - Bearer token sent via Authorization header.
 
 **Token Refresh:**
-Will be implemented when frontend is going to be built.
+The backend exposes a `GET /refresh` endpoint that validates the current JWT and issues a new one with a fresh expiry. The frontend is responsible for calling this endpoint periodically, it does so after 55 minutes if the user is still active.
 
 ## API Design
 
@@ -283,7 +283,7 @@ All errors follow a constistent JSON structure defined in `app/schemas/error.py`
 }
 ```
 
-Error Categories:
+**Error Categories:**
 
 - VALIDATION_ERROR - Invalid input data (400/422)
 - NOT_FOUND - Resource doesn't exist (404)
@@ -291,7 +291,7 @@ Error Categories:
 - CONFLICT - Resource conflict (409)
 - DATABASE_ERROR - Server issues (500)
 
-Reusable Error Functions (utils/errors.py):
+**Reusable Error Functions (utils/errors.py):**
 
 - validation_error() - 400 for syntax errors.
 - unproccessable_entity_error() - 422 for semantic errors.
@@ -299,7 +299,7 @@ Reusable Error Functions (utils/errors.py):
 - conflict_error() - 409 for duplicate resources.
 - database\*error() - 500 for server issues.
 
-Benefits:
+**Benefits:**
 
 - Consistent error format across all endpoints.
 - Machine-readable error codes for client handling.
