@@ -328,10 +328,14 @@ All errors follow a constistent JSON structure defined in `app/schemas/error.py`
 - **Pydantic** - Data validation, serialization and API schema definition.
 - **Pandas** - Data processing for the Steam dataset import.
 
-**Development & Deployment:**
+**Development:**
 
 - **Python-multipart** - File upload support.
 - **Pydantic-settings** - Configuration management.
+
+### Deployment
+
+The application is containerized using Docker and deployed on a server. The frontend (Nuxt) and backend (FastAPI) each run in their own container, orchestrated with Docker Compose. Nginx acts as a reverse proxy, routing `/api/*` traffic to the FastAPI container and all other requests to the Nuxt container. A GitLab CI pipeline automatically builds and publishes a new Docker image to the GitLab registry on every push to `main`.
 
 **Why these choices:**
 
