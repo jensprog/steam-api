@@ -18,6 +18,7 @@ def serialize_game(game: Game, include_links: bool = True) -> GameResponse:
         "id": game.id,
         "name": game.name,
         "price": game.price or 0.0,
+        "short_description": game.short_description,
         "release_date": game.release_date,
         "metacritic_score": game.metacritic_score or 0,
         "positive": game.positive or 0,

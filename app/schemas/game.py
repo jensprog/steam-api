@@ -30,6 +30,7 @@ class GameResponse(BaseModel):
     name: str
     price: float
     release_date: Optional[str] = None
+    short_description: Optional[str] = None
     metacritic_score: int
     positive: int
     negative: int
