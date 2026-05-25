@@ -43,7 +43,13 @@ def get_genre_by_id(
     game_links = []
     for game in games:
         game_links.append(
-            {"rel": "related", "href": f"/games/{game.id}", "method": "GET", "title": f"Game: {game.name}"}
+            {
+                "rel": "related",
+                "href": f"/games/{game.id}",
+                "method": "GET",
+                "title": f"Game: {game.name}",
+                "header_image": game.header_image,
+            }
         )
 
     pages = (total_games + params.limit - 1) // params.limit
