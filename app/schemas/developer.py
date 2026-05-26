@@ -38,6 +38,7 @@ class DevelopersListResponse(BaseModel):
 class DeveloperWithGameCount(BaseModel):
     name: str
     game_count: int
+    id: int
 
 
 class DevelopersWithGamesResponse(BaseModel):

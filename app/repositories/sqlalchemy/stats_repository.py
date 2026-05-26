@@ -22,18 +22,18 @@ class SQLAlchemyStatsRepository(StatsRepositoryInterface):
 
     def get_genres_with_game_count(self) -> List[Any]:
         return (
-            self.db.query(Genre.name, func.count(game_genres.c.game_id).label("game_count"))
+            self.db.query(Genre.name, Genre.id, func.count(game_genres.c.game_id).label("game_count"))
             .join(game_genres)
-            .group_by(Genre.name)
+            .group_by(Genre.name, Genre.id)
             .order_by(desc(func.count(game_genres.c.game_id)))
             .all()
         )
 
     def get_developers_with_game_count(self, params: DeveloperQueryParameters) -> Tuple[List[Any], int]:
         query = (
-            self.db.query(Developer.name, func.count(game_developers.c.game_id).label("game_count"))
+            self.db.query(Developer.name, Developer.id, func.count(game_developers.c.game_id).label("game_count"))
             .join(game_developers)
-            .group_by(Developer.name)
+            .group_by(Developer.name, Developer.id)
             .order_by(desc(func.count(game_developers.c.game_id)))
         )
 

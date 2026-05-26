@@ -65,7 +65,7 @@ def get_genres_with_game_count(stats_repo: StatsRepositoryInterface):
     genres_with_games = []
 
     for row in genre_with_game_count:
-        genres_with_games.append(GenreWithGameCount(name=row.name, game_count=row.game_count))
+        genres_with_games.append(GenreWithGameCount(name=row.name, game_count=row.game_count, id=row.id))
     return GenresWithGamesResponse(genres=genres_with_games)
 
 
@@ -87,5 +87,5 @@ def get_developers_with_game_count(stats_repo: StatsRepositoryInterface, params:
     developers_with_games = []
 
     for row in rows:
-        developers_with_games.append(DeveloperWithGameCount(name=row.name, game_count=row.game_count))
+        developers_with_games.append(DeveloperWithGameCount(name=row.name, game_count=row.game_count, id=row.id))
     return DevelopersWithGamesResponse(developers=developers_with_games, pagination=pagination, links=links)

@@ -38,6 +38,7 @@ class GenresListResponse(BaseModel):
 class GenreWithGameCount(BaseModel):
     name: str
     game_count: int
+    id: int
 
 
 class GenresWithGamesResponse(BaseModel):
