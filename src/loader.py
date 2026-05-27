@@ -15,8 +15,8 @@ def load_developers(db: Session, developers: set) -> Dict[str, int]:
     print(f"Loading {len(developers)} developers into the database...")
 
     dev_list = [{"name": name} for name in developers]
-    stmt = pg_insert(Developer).values(dev_list).on_conflict_do_nothing(index_elements=["name"])
-    db.execute(stmt)
+    statement = pg_insert(Developer).values(dev_list).on_conflict_do_nothing(index_elements=["name"])
+    db.execute(statement)
     db.commit()
 
     all_devs = db.query(Developer.id, Developer.name).all()
@@ -31,8 +31,8 @@ def load_genres(db: Session, genres: set) -> Dict[str, int]:
     print(f"Loading {len(genres)} genres into the database...")
 
     genre_list = [{"name": name} for name in genres]
-    stmt = pg_insert(Genre).values(genre_list).on_conflict_do_nothing(index_elements=["name"])
-    db.execute(stmt)
+    statement = pg_insert(Genre).values(genre_list).on_conflict_do_nothing(index_elements=["name"])
+    db.execute(statement)
     db.commit()
 
     all_genres = db.query(Genre.id, Genre.name).all()
@@ -122,10 +122,10 @@ def _flush_batch(db: Session, batch_games: list, dev_map: Dict[str, int], genre_
                     genre_links.append({"game_id": game.id, "genre_id": genre_map[genre_name]})
 
     if dev_links:
-        stmt = pg_insert(game_developers).values(dev_links).on_conflict_do_nothing()
-        db.execute(stmt)
+        statement = pg_insert(game_developers).values(dev_links).on_conflict_do_nothing()
+        db.execute(statement)
     if genre_links:
-        stmt = pg_insert(game_genres).values(genre_links).on_conflict_do_nothing()
-        db.execute(stmt)
+        statement = pg_insert(game_genres).values(genre_links).on_conflict_do_nothing()
+        db.execute(statement)
 
     db.commit()
