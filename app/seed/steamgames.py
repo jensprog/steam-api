@@ -23,7 +23,7 @@ df = extract_games_json("data/games.json")
 logger.info(f"Extracted {len(df)} games")
 
 logger.info("Starting data transformation...")
-df_clean = transform_games(df, max_games=15000)
+df_clean = transform_games(df)
 logger.info(f"Transformed to {len(df_clean)} clean games")
 
 logger.info("Extracting developers...")

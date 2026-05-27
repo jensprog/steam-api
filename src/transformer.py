@@ -3,7 +3,7 @@ import pandas as pd
 """Cleans and transform the extracted games data."""
 
 
-def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
+def transform_games(df: pd.DataFrame, max_games: int = None) -> pd.DataFrame:
     print("Transforming data...")
 
     initial_count = len(df)
@@ -13,7 +13,8 @@ def transform_games(df: pd.DataFrame, max_games: int = 15000) -> pd.DataFrame:
     if df["price"].max() > 1000:  # Assuming price is in cents if max is very high
         df["price"] = df["price"] / 100.0
 
-    df = df.head(max_games)
+    if max_games is not None:
+        df = df.head(max_games)
     print(f"Transformed data with {len(df)} games ready for loading")
     return df
 
