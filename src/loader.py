@@ -122,8 +122,10 @@ def _flush_batch(db: Session, batch_games: list, dev_map: Dict[str, int], genre_
                     genre_links.append({"game_id": game.id, "genre_id": genre_map[genre_name]})
 
     if dev_links:
-        db.execute(insert(game_developers), dev_links)
+        stmt = pg_insert(game_developers).values(dev_links).on_conflict_do_nothing()
+        db.execute(stmt)
     if genre_links:
-        db.execute(insert(game_genres), genre_links)
+        stmt = pg_insert(game_genres).values(genre_links).on_conflict_do_nothing()
+        db.execute(stmt)
 
     db.commit()
