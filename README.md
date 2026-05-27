@@ -1,16 +1,8 @@
-# API Design Assignment
-
 ## Project Name
 
 **Steam Games Archive API**
 
-## Objective
-
-Design and develop a robust, well-documented API (REST or GraphQL) that allows users to retrieve and manage information from a dataset of your choice. The API must include JWT authentication, automated testing via Postman/Newman in a CI/CD pipeline, and be publicly deployed.
-
-Choose a dataset (10000+ data points) that interests you — it should include at least one primary CRUD resource and two additional read-only resources. Sources like [Kaggle](https://www.kaggle.com/datasets), public APIs, or CSV files work well. Pick something you find interesting, as you will reuse this API in the next assignment (WT dashboard).
-
-_Describe your API in a few sentences: what dataset does it serve, what are its main resources, and what can users do with it?_
+## Overview
 
 - The dataset contains the games from the gaming platform Steam, the largest platform for PC.
 - The main resource is Games, authenticated users can use CRUD operations.
@@ -130,17 +122,15 @@ The API is implemented using REST principles.
 | **Postman Collection**     | `SteamAPI.postman_collection.json`    |
 | **Production Environment** | `production.postman_environment.json` |
 
-**Examiner can verify tests in one of the following ways:**
+Tests can be run in one of the following ways:
 
-1. **CI/CD pipeline** — check the pipeline output in GitLab for test results.
+1. **CI/CD pipeline** — check the pipeline output in GitHub for test results.
 2. **Run manually** — no setup needed:
    ```
    npx newman run SteamAPI.postman_collection.json -e production.postman_environment.json --insecure
    ```
 
 ## Dataset
-
-_Describe the dataset you chose:_
 
 | Field                                | Description                                                     |
 | ------------------------------------ | --------------------------------------------------------------- |
@@ -159,7 +149,7 @@ JWT is required for 3 endpoints:
 - PUT /games/{id}
 - DELETE /games/{id}
 
-JWT authentication was a requirement for this project. The implementation follows REST principles by being stateless - each request contains all necessary authentication information.
+The implementation follows REST principles by being stateless - each request contains all necessary authentication information.
 
 **Implementation details:**
 
@@ -335,7 +325,8 @@ All errors follow a constistent JSON structure defined in `app/schemas/error.py`
 
 ### Deployment
 
-The application is containerized using Docker and deployed on a server. The frontend (Nuxt) and backend (FastAPI) each run in their own container, orchestrated with Docker Compose. Nginx acts as a reverse proxy, routing `/api/*` traffic to the FastAPI container and all other requests to the Nuxt container. A GitLab CI pipeline automatically builds and publishes a new Docker image to the GitLab registry on every push to `main`.
+The application is containerized using Docker and deployed on a server. The frontend (Nuxt) and backend (FastAPI) each run in their own container, 
+orchestrated with Docker Compose. Nginx acts as a reverse proxy, routing `/api/*` traffic to the FastAPI container and all other requests to the Nuxt container. A GitHub Actions pipeline automatically builds and publishes a new Docker image to the GitHub Container Registry (GHCR) on every push to `main`.
 
 **Why these choices:**
 
@@ -343,17 +334,6 @@ The application is containerized using Docker and deployed on a server. The fron
 - PostgreSQL for production-grade relational data storage.
 - SQLAlchemy for database abstraction and migration support.
 - JWT for stateless authentication fitting REST principles.
-
-This is the first time developing in Python, most of the tech stack I researched on google and asked AI for help with recommended different frameworks and libraries.
-
-## Reflection
-
-The hardest part about creating the API was that I chose a new tech stack that I have never tried before. I wasn't that familiar with Python not using any curly brackets and that formatting is really important to get the code working as you would expect.
-
-I learned new frameworks like FastAPI, SQLAlchemy for a relational database, PostgreSQL and I almost forgot (thanks to the clean code quiz I rembemered) to not mix high-level and low-level modules.
-I have not tried to seed data into a database before, use the ETL process to get the data that you want, transform it, then load it into the database.
-
-If I could go back with the knowledge I have now, I would structure my work better. I had a vision and a plan written down before hand but somewhere along the way I steered of course and that made things frustrating and I lost track of my vision for a bit. I would also recommend myself to read up on and learn more about the frameworks and libraries before hand.
 
 ## Acknowledgements
 
@@ -372,39 +352,3 @@ If I could go back with the knowledge I have now, I would structure my work bett
 
 Postman and their learning programs were great to get a better understanding on how to use Postman.
 
-## Requirements
-
-See [all requirements in Issues](../../issues/). Close issues as you implement them. Create additional issues for any custom functionality. See [TESTING.md](TESTING.md) for detailed testing requirements.
-
-### Functional Requirements — Common
-
-| Requirement                                                          | Issue                  | Status             |
-| -------------------------------------------------------------------- | ---------------------- | ------------------ |
-| Data acquisition — choose and document a dataset (1000+ data points) | [#1](../../issues/1)   | :white_check_mark: |
-| Full CRUD for primary resource, read-only for secondary resources    | [#2](../../issues/2)   | :white_check_mark: |
-| JWT authentication for write operations                              | [#3](../../issues/3)   | :white_check_mark: |
-| Error handling (400, 401, 404 with consistent format)                | [#4](../../issues/4)   | :white_check_mark: |
-| Filtering and pagination for large result sets                       | [#17](../../issues/17) | :white_check_mark: |
-
-### Functional Requirements — REST
-
-| Requirement                                                 | Issue                  | Status             |
-| ----------------------------------------------------------- | ---------------------- | ------------------ |
-| RESTful endpoints with proper HTTP methods and status codes | [#12](../../issues/12) | :white_check_mark: |
-| HATEOAS (hypermedia links in responses)                     | [#13](../../issues/13) | :white_check_mark: |
-
-### Non-Functional Requirements
-
-| Requirement                                                 | Issue                  | Status               |
-| ----------------------------------------------------------- | ---------------------- | -------------------- |
-| API documentation (Swagger/OpenAPI or Postman)              | [#6](../../issues/6)   | :white_check_mark:   |
-| Automated Postman tests (20+ test cases, success + failure) | [#7](../../issues/7)   | :white_check_mark:   |
-| CI/CD pipeline running tests on every commit/MR             | [#8](../../issues/8)   | :white_check_mark:   |
-| Seed script for sample data                                 | [#5](../../issues/5)   | :white_check_mark:   |
-| Code quality (consistent standard, modular, documented)     | [#10](../../issues/10) | :white_check_mark:   |
-| Deployed and publicly accessible                            | [#9](../../issues/9)   | :white_check_mark:   |
-| Peer review reflection submitted on merge request           | [#11](../../issues/11) | :white_large_square: |
-
-```
-
-```
