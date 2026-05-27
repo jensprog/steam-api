@@ -4,7 +4,6 @@ __pycache__/
 .env
 tests/
 data/
-src/
 *.postman_collection.json
 *.postman_environment.json
 .git/
