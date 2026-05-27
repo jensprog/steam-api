@@ -1,77 +1,70 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import insert
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.models import Game, Developer, Genre
+from app.models.game import game_developers, game_genres
 import pandas as pd
 from typing import Dict
 
+BATCH_SIZE = 1000
+
 
 def load_developers(db: Session, developers: set) -> Dict[str, int]:
-    """Load developers to database and returns a dictionary of developer names
-    to their IDs."""
+    """Load developers to database using bulk insert and returns a dictionary
+    of developer names to their IDs."""
     print(f"Loading {len(developers)} developers into the database...")
-    dev_map = {}
 
-    for dev_name in developers:
-        existing = db.query(Developer).filter(Developer.name == dev_name).first()
-
-        if existing:
-            dev_map[dev_name] = existing.id
-        else:
-            new_dev = Developer(name=dev_name)
-            db.add(new_dev)
-            db.flush()
-            dev_map[dev_name] = new_dev.id
-
+    dev_list = [{"name": name} for name in developers]
+    stmt = pg_insert(Developer).values(dev_list).on_conflict_do_nothing(index_elements=["name"])
+    db.execute(stmt)
     db.commit()
+
+    all_devs = db.query(Developer.id, Developer.name).all()
+    dev_map = {name: dev_id for dev_id, name in all_devs}
     print(f"Loaded {len(dev_map)} developers")
     return dev_map
 
 
 def load_genres(db: Session, genres: set) -> Dict[str, int]:
-    """Load genres to database and returns a dictionary of genre names to
-    their IDs."""
+    """Load genres to database using bulk insert and returns a dictionary
+    of genre names to their IDs."""
     print(f"Loading {len(genres)} genres into the database...")
-    genre_map = {}
 
-    for genre_name in genres:
-        existing = db.query(Genre).filter(Genre.name == genre_name).first()
-
-        if existing:
-            genre_map[genre_name] = existing.id
-        else:
-            new_genre = Genre(name=genre_name)
-            db.add(new_genre)
-            db.flush()
-            genre_map[genre_name] = new_genre.id
-
+    genre_list = [{"name": name} for name in genres]
+    stmt = pg_insert(Genre).values(genre_list).on_conflict_do_nothing(index_elements=["name"])
+    db.execute(stmt)
     db.commit()
+
+    all_genres = db.query(Genre.id, Genre.name).all()
+    genre_map = {name: genre_id for genre_id, name in all_genres}
     print(f"Loaded {len(genre_map)} genres")
     return genre_map
 
 
 def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map: Dict[str, int]):
-    """Load games to database, linking to developers and genres."""
+    """Load games to database in batches, linking to developers and genres
+    via direct association table inserts."""
     print(f"Loading {len(df)} games into the database...")
 
-    try:
-        games_loaded = 0
-        total_dev_links = 0
-        total_genre_links = 0
+    games_loaded = 0
+    batch_games = []
 
+    try:
         for _, row in df.iterrows():
             game = _create_game_from_row(row)
-            total_dev_links += _link_developers_to_game(db, game, row, dev_map)
-            total_genre_links += _link_genres_to_game(db, game, row, genre_map)
-
             db.add(game)
+            batch_games.append((game, row))
             games_loaded += 1
 
-            if games_loaded % 100 == 0:
+            if games_loaded % BATCH_SIZE == 0:
+                _flush_batch(db, batch_games, dev_map, genre_map)
+                batch_games = []
                 print(f"Progress: {games_loaded}/{len(df)} games loaded...")
 
-        db.commit()
+        if batch_games:
+            _flush_batch(db, batch_games, dev_map, genre_map)
+
         print(f"Loaded all {games_loaded} games successfully!")
-        print(f"Total developer links: {total_dev_links}")
-        print(f"Total genre links: {total_genre_links}")
 
     except Exception as e:
         db.rollback()
@@ -106,33 +99,31 @@ def _create_game_from_row(row) -> Game:
     )
 
 
-def _link_developers_to_game(db: Session, game: Game, row, dev_map: Dict[str, int]) -> int:
-    """Link developers to game. Returns number of links created."""
-    dev_links_created = 0
-    developers_data = row.get("developers")
+def _flush_batch(db: Session, batch_games: list, dev_map: Dict[str, int], genre_map: Dict[str, int]):
+    """Flush a batch of games and insert their associations."""
+    db.flush()
 
-    if developers_data is not None and isinstance(developers_data, list) and len(developers_data) > 0:
-        for dev_name in developers_data:
-            if dev_name and dev_name.strip() in dev_map:
-                dev = db.query(Developer).filter(Developer.id == dev_map[dev_name.strip()]).first()
-                if dev and dev not in game.developers:
-                    game.developers.append(dev)
-                    dev_links_created += 1
+    dev_links = []
+    genre_links = []
 
-    return dev_links_created
+    for game, row in batch_games:
+        devs_data = row.get("developers")
+        if devs_data and isinstance(devs_data, list):
+            for dev_name in devs_data:
+                dev_name = dev_name.strip()
+                if dev_name in dev_map:
+                    dev_links.append({"game_id": game.id, "developer_id": dev_map[dev_name]})
 
+        genres_data = row.get("genres")
+        if genres_data and isinstance(genres_data, list):
+            for genre_name in genres_data:
+                genre_name = genre_name.strip()
+                if genre_name in genre_map:
+                    genre_links.append({"game_id": game.id, "genre_id": genre_map[genre_name]})
 
-def _link_genres_to_game(db: Session, game: Game, row, genre_map: Dict[str, int]) -> int:
-    """Link genres to game. Returns number of links created."""
-    genre_links_created = 0
-    genres_data = row.get("genres")
+    if dev_links:
+        db.execute(insert(game_developers), dev_links)
+    if genre_links:
+        db.execute(insert(game_genres), genre_links)
 
-    if genres_data is not None and isinstance(genres_data, list) and len(genres_data) > 0:
-        for genre_name in genres_data:
-            if genre_name and genre_name.strip() in genre_map:
-                genre = db.query(Genre).filter(Genre.id == genre_map[genre_name.strip()]).first()
-                if genre and genre not in game.genres:
-                    game.genres.append(genre)
-                    genre_links_created += 1
-
-    return genre_links_created
+    db.commit()
