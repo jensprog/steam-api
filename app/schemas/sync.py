@@ -7,6 +7,7 @@ class MovieData(BaseModel):
     hls_h264: str
     name: str
 
+
 class SteamAppData(BaseModel):
     app_id: str
     name: str
