@@ -1,3 +1,4 @@
+# Abstract interface for sync repository, defining methods for managing sync state and upserting games.
 from abc import ABC, abstractmethod
 from typing import Optional
 from datetime import datetime

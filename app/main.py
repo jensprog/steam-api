@@ -5,12 +5,20 @@ from app.core.rate_limit import limiter, rate_limit_handler
 from slowapi.errors import RateLimitExceeded
 from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
+from app.scheduler import start_scheduler, stop_scheduler
+from contextlib import asynccontextmanager
 
 cors_origins = settings.CORS_ORIGINS.split(",")
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Steam Games API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    start_scheduler()
+    yield
+    stop_scheduler()
+
+app = FastAPI(title="Steam Games API", version="1.0.0", lifespan=lifespan)
 
 # Add rate limiting state and exception handler
 app.state.limiter = limiter

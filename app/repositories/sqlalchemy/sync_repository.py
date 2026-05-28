@@ -1,3 +1,4 @@
+# SQLAlchemy implementation of SyncRepositoryInterface, handles sync state and game upserts in the database.
 from datetime import datetime
 from typing import Optional
 from app.schemas.sync import SteamAppData
@@ -37,6 +38,7 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
         game_dict = game_data.model_dump()
         game_dict.pop("developers", None)
         game_dict.pop("genres", None)
+        game_dict.pop("movies", None)
 
         existing_game = self.db.query(Game).filter(Game.app_id == game_data.app_id).first()
 

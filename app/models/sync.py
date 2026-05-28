@@ -1,3 +1,4 @@
+# Tracks the last sync timestamp used to determine what data to fetch from Steam API.
 from sqlalchemy import Column, Integer, DateTime
 from app.database import Base
 
