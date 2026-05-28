@@ -12,11 +12,13 @@ cors_origins = settings.CORS_ORIGINS.split(",")
 
 Base.metadata.create_all(bind=engine)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     start_scheduler()
     yield
     stop_scheduler()
+
 
 app = FastAPI(title="Steam Games API", version="1.0.0", lifespan=lifespan)
 

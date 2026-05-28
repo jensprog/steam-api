@@ -6,6 +6,7 @@ from app.services.steam_sync_service import sync_games
 
 scheduler = AsyncIOScheduler()
 
+
 def run_sync_job():
     db = SessionLocal()
     try:
@@ -14,9 +15,11 @@ def run_sync_job():
     finally:
         db.close()
 
+
 def start_scheduler():
     scheduler.add_job(run_sync_job, "cron", hour=3, minute=0)
     scheduler.start()
+
 
 def stop_scheduler():
     scheduler.shutdown()
