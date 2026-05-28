@@ -1,9 +1,7 @@
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import Optional
 from app.schemas.sync import SteamAppData
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from app.repositories.exceptions import ConstraintViolationError
 from app.models.sync import SyncState
 from app.repositories.interfaces.sync_repository import SyncRepositoryInterface
 from app.models.game import Game
