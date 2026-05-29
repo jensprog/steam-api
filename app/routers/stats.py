@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.repositories.interfaces.stats_repository import StatsRepositoryInterface
 from app.repositories.sqlalchemy.stats_repository import SQLAlchemyStatsRepository
+from app.repositories.interfaces.game_repository import GameRepositoryInterface
+from app.repositories.sqlalchemy.game_repository import SQLAlchemyGameRepository
 from app.schemas.developer import DeveloperQueryParameters
+from app.services.steam_ranking_service import get_most_concurrent_games_played
 from app.services.stats_service import (
     get_games_by_amount_of_players,
     get_games_by_price,
@@ -17,6 +20,10 @@ router = APIRouter(tags=["Stats"])
 def get_stats_repository(db: Session = Depends(get_db)) -> StatsRepositoryInterface:
     """Dependency injection for stats repository"""
     return SQLAlchemyStatsRepository(db)
+
+
+def get_game_repository(db: Session = Depends(get_db)) -> GameRepositoryInterface:
+    return SQLAlchemyGameRepository(db)
 
 
 @router.get("/games/by-price", status_code=status.HTTP_200_OK)
@@ -39,3 +46,8 @@ def get_developers_by_games(
     params: DeveloperQueryParameters = Depends(), stats_repo: StatsRepositoryInterface = Depends(get_stats_repository)
 ):
     return get_developers_with_game_count(stats_repo, params)
+
+
+@router.get("/games/concurrent-players", status_code=status.HTTP_200_OK)
+def most_concurrent_players(game_repo: GameRepositoryInterface = Depends(get_game_repository)):
+    return get_most_concurrent_games_played(game_repo)
