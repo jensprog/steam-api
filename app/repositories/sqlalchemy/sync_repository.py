@@ -34,6 +34,16 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
 
         self.db.commit()
 
+    def is_catch_up_completed(self) -> bool:
+        query = self.db.query(SyncState).first()
+        return query is not None and bool(query.catch_up_completed)
+
+    def mark_catch_up_completed(self) -> None:
+        query = self.db.query(SyncState).first()
+        if query is not None:
+            query.catch_up_completed = True
+            self.db.commit()
+
     def upsert_game(self, game_data: SteamAppData) -> None:
         game_dict = game_data.model_dump()
         game_dict.pop("developers", None)

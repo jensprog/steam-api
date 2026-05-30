@@ -17,3 +17,11 @@ class SyncRepositoryInterface(ABC):
     @abstractmethod
     def upsert_game(self, game_data: SteamAppData) -> None:
         pass
+
+    @abstractmethod
+    def is_catch_up_completed(self) -> bool:
+        pass
+
+    @abstractmethod
+    def mark_catch_up_completed(self) -> None:
+        pass
