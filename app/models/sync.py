@@ -8,3 +8,4 @@ class SyncState(Base):
     id = Column(Integer, primary_key=True)
     last_sync_timestamp = Column(DateTime)
     catch_up_completed = Column(Boolean, default=False)
+    gap_sync_checkpoint = Column(Integer, nullable=True)

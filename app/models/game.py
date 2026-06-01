@@ -31,6 +31,7 @@ class Game(Base):
     id = Column(Integer, primary_key=True, index=True)
     app_id = Column(Integer, unique=True, index=True)
     name = Column(String, nullable=False, index=True)
+    type = Column(String, default="game")
     release_date = Column(String)
     price = Column(Float, default=0.0)
     short_description = Column(Text)

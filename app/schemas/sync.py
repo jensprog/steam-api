@@ -14,6 +14,7 @@ class SteamAppData(BaseModel):
     name: str
     price: float = 0.0
     release_date: Optional[str] = None
+    type: Optional[str] = None
     short_description: Optional[str] = None
     windows: bool = False
     mac: bool = False

@@ -1,6 +1,6 @@
 # SQLAlchemy implementation of SyncRepositoryInterface, handles sync state and game upserts in the database.
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Set
 from app.schemas.sync import SteamAppData
 from sqlalchemy.orm import Session
 from app.models.sync import SyncState
@@ -44,6 +44,22 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
             query.catch_up_completed = True
         else:
             self.db.add(SyncState(catch_up_completed=True))
+        self.db.commit()
+
+    def get_all_app_ids(self) -> Set[int]:
+        rows = self.db.query(Game.app_id).all()
+        return {row[0] for row in rows}
+
+    def get_gap_sync_checkpoint(self) -> Optional[int]:
+        state = self.db.query(SyncState).first()
+        return state.gap_sync_checkpoint if state is not None else None
+
+    def set_gap_sync_checkpoint(self, app_id: Optional[int]) -> None:
+        state = self.db.query(SyncState).first()
+        if state is not None:
+            state.gap_sync_checkpoint = app_id
+        else:
+            self.db.add(SyncState(gap_sync_checkpoint=app_id))
         self.db.commit()
 
     def upsert_game(self, game_data: SteamAppData) -> None:
