@@ -1,11 +1,14 @@
 # Fetches app list and game details from the Steam API and syncs them to the database.
 from typing import List
+import logging
 import requests
 import time
 from app.core.config import settings
 from app.repositories.interfaces.sync_repository import SyncRepositoryInterface
 from app.schemas.sync import SteamAppData
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 def get_app_list_from_steam_api(sync_repo: SyncRepositoryInterface) -> List[dict]:
@@ -46,7 +49,8 @@ def sync_games(sync_repo: SyncRepositoryInterface) -> None:
         try:
             game_data = SteamAppData.model_validate(result)
             sync_repo.upsert_game(game_data)
-        except Exception:
+        except Exception as e:
+            logger.error("sync_games failed for app_id %s: %s", app_id, e)
             continue
 
     sync_repo.update_last_sync_timestamp(datetime.now())
@@ -77,8 +81,8 @@ def gap_sync(sync_repo: SyncRepositoryInterface) -> None:
         try:
             game_data = SteamAppData.model_validate(result)
             sync_repo.upsert_game(game_data)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.error("gap_sync failed for app_id %s: %s", app_id, e)
         sync_repo.set_gap_sync_checkpoint(app_id)
 
     sync_repo.set_gap_sync_checkpoint(None)
