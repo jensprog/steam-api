@@ -86,30 +86,3 @@ def gap_sync(sync_repo: SyncRepositoryInterface) -> None:
         sync_repo.set_gap_sync_checkpoint(app_id)
 
     sync_repo.set_gap_sync_checkpoint(None)
-
-
-def catch_up_sync(from_date: datetime, sync_repo: SyncRepositoryInterface) -> None:
-    params = {
-        "key": settings.STEAM_API_KEY,
-        "if_modified_since": int(from_date.timestamp()),
-    }
-    response = requests.get("https://api.steampowered.com/IStoreService/GetAppList/v1/", params=params)
-    response.raise_for_status()
-    apps = response.json().get("response", {}).get("apps", [])
-
-    for game in apps:
-        app_id = game["appid"]
-        time.sleep(1.5)
-        result = get_app_details(app_id)
-
-        if result is None:
-            continue
-
-        result["app_id"] = str(app_id)
-        try:
-            game_data = SteamAppData.model_validate(result)
-            sync_repo.upsert_game(game_data)
-        except Exception:
-            continue
-
-    sync_repo.mark_catch_up_completed()

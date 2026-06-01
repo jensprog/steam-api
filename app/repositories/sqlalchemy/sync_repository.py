@@ -34,18 +34,6 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
 
         self.db.commit()
 
-    def is_catch_up_completed(self) -> bool:
-        query = self.db.query(SyncState).first()
-        return query is not None and bool(query.catch_up_completed)
-
-    def mark_catch_up_completed(self) -> None:
-        query = self.db.query(SyncState).first()
-        if query is not None:
-            query.catch_up_completed = True
-        else:
-            self.db.add(SyncState(catch_up_completed=True))
-        self.db.commit()
-
     def get_all_app_ids(self) -> Set[int]:
         rows = self.db.query(Game.app_id).all()
         return {row[0] for row in rows}

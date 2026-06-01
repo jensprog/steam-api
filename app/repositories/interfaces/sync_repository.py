@@ -19,14 +19,6 @@ class SyncRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def is_catch_up_completed(self) -> bool:
-        pass
-
-    @abstractmethod
-    def mark_catch_up_completed(self) -> None:
-        pass
-
-    @abstractmethod
     def get_all_app_ids(self) -> Set[int]:
         pass
 
