@@ -3,7 +3,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.database import SessionLocal
 from app.repositories.sqlalchemy.sync_repository import SQLAlchemySyncRepository
 from app.services.steam_sync_service import sync_games, gap_sync
-from datetime import datetime
 
 scheduler = AsyncIOScheduler()
 
