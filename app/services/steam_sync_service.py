@@ -43,8 +43,11 @@ def sync_games(sync_repo: SyncRepositoryInterface) -> None:
             continue
 
         result["app_id"] = str(app_id)
-        game_data = SteamAppData.model_validate(result)
-        sync_repo.upsert_game(game_data)
+        try:
+            game_data = SteamAppData.model_validate(result)
+            sync_repo.upsert_game(game_data)
+        except Exception:
+            continue
 
     sync_repo.update_last_sync_timestamp(datetime.now())
 

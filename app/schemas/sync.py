@@ -5,7 +5,7 @@ from typing import List, Optional
 
 class MovieData(BaseModel):
     thumbnail: str
-    hls_h264: str
+    hls_h264: Optional[str] = None
     name: str
 
 
