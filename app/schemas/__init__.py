@@ -5,6 +5,8 @@ from .game import (
     GamesListResponse,
     PaginationResponse,
     GameQueryParameters,
+    RankingEntry,
+    RankingsListResponse,
 )
 from .developer import (
     DeveloperResponse,
@@ -36,4 +38,6 @@ __all__ = [
     "UserRegister",
     "UserLogin",
     "TokenResponse",
+    "RankingEntry",
+    "RankingsListResponse",
 ]

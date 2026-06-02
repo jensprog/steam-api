@@ -98,3 +98,22 @@ class GameUpdate(BaseModel):
     metacritic_score: Optional[int] = None
     positive: Optional[int] = None
     negative: Optional[int] = None
+
+
+class RankingEntry(BaseModel):
+    rank: int
+    concurrent_in_game: int
+    peak_in_game: int
+    name: str
+    header_image: Optional[str] = None
+
+
+class RankingsListResponse(BaseModel):
+    rankings: List[RankingEntry]
+    pagination: PaginationResponse
+    links: dict
+
+
+class RankQueryParameters(BaseModel):
+    page: int = 1
+    limit: int = 20

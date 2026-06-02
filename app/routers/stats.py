@@ -6,7 +6,8 @@ from app.repositories.sqlalchemy.stats_repository import SQLAlchemyStatsReposito
 from app.repositories.interfaces.game_repository import GameRepositoryInterface
 from app.repositories.sqlalchemy.game_repository import SQLAlchemyGameRepository
 from app.schemas.developer import DeveloperQueryParameters
-from app.services.steam_ranking_service import get_most_concurrent_games_played
+from app.schemas.game import RankQueryParameters
+from app.services.steam_ranking_service import get_most_concurrent_games_played, get_all_ranks
 from app.services.stats_service import (
     get_games_by_amount_of_players,
     get_games_by_price,
@@ -51,3 +52,10 @@ def get_developers_by_games(
 @router.get("/games/concurrent-players", status_code=status.HTTP_200_OK)
 def most_concurrent_players(game_repo: GameRepositoryInterface = Depends(get_game_repository)):
     return get_most_concurrent_games_played(game_repo)
+
+
+@router.get("/games/all-concurrent-players", status_code=status.HTTP_200_OK)
+def all_concurrent_players(
+    params: RankQueryParameters = Depends(), game_repo: GameRepositoryInterface = Depends(get_game_repository)
+):
+    return get_all_ranks(game_repo, params)
