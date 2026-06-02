@@ -6,7 +6,7 @@ from app.models.genre import Genre
 from app.models.developer import Developer
 from app.models import game_genres, game_developers
 from app.schemas.developer import DeveloperQueryParameters
-from typing import List, Tuple, Any
+from typing import Any
 
 
 class SQLAlchemyStatsRepository(StatsRepositoryInterface):
@@ -14,13 +14,13 @@ class SQLAlchemyStatsRepository(StatsRepositoryInterface):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_games_with_price(self) -> List[Any]:
+    def get_games_with_price(self) -> list[Any]:
         return self.db.query(Game.name, Game.price).filter(Game.price != None).all()  # noqa: E711
 
-    def get_games_with_owners(self) -> List[Any]:
+    def get_games_with_owners(self) -> list[Any]:
         return self.db.query(Game.name, Game.estimated_owners).filter(Game.estimated_owners != None).all()  # noqa: E711
 
-    def get_genres_with_game_count(self) -> List[Any]:
+    def get_genres_with_game_count(self) -> list[Any]:
         return (
             self.db.query(Genre.name, Genre.id, func.count(game_genres.c.game_id).label("game_count"))
             .join(game_genres)
@@ -29,7 +29,7 @@ class SQLAlchemyStatsRepository(StatsRepositoryInterface):
             .all()
         )
 
-    def get_developers_with_game_count(self, params: DeveloperQueryParameters) -> Tuple[List[Any], int]:
+    def get_developers_with_game_count(self, params: DeveloperQueryParameters) -> tuple[list[Any], int]:
         query = (
             self.db.query(Developer.name, Developer.id, func.count(game_developers.c.game_id).label("game_count"))
             .join(game_developers)

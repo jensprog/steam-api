@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict
+from typing import Any
 from pydantic import BaseModel
 
 """
@@ -13,7 +13,7 @@ class ErrorResponse(BaseModel):
 
     error_code: str
     message: str
-    details: Optional[Dict[str, Any]] = None
+    details: dict[str, Any] | None = None
 
 
 class ValidationErrorDetail(BaseModel):
@@ -28,7 +28,7 @@ class ValidationErrorResponse(BaseModel):
     """Specific error response for validation failures."""
 
     error_code: str
-    details: Optional[Dict[str, ValidationErrorDetail]] = None
+    details: dict[str, ValidationErrorDetail] | None = None
 
 
 # Pre-defined error types

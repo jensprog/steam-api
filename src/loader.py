@@ -4,12 +4,11 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.models import Game, Developer, Genre
 from app.models.game import game_developers, game_genres
 import pandas as pd
-from typing import Dict
 
 BATCH_SIZE = 1000
 
 
-def load_developers(db: Session, developers: set) -> Dict[str, int]:
+def load_developers(db: Session, developers: set) -> dict[str, int]:
     """Load developers to database using bulk insert and returns a dictionary
     of developer names to their IDs."""
     print(f"Loading {len(developers)} developers into the database...")
@@ -25,7 +24,7 @@ def load_developers(db: Session, developers: set) -> Dict[str, int]:
     return dev_map
 
 
-def load_genres(db: Session, genres: set) -> Dict[str, int]:
+def load_genres(db: Session, genres: set) -> dict[str, int]:
     """Load genres to database using bulk insert and returns a dictionary
     of genre names to their IDs."""
     print(f"Loading {len(genres)} genres into the database...")
@@ -41,7 +40,7 @@ def load_genres(db: Session, genres: set) -> Dict[str, int]:
     return genre_map
 
 
-def load_games(db: Session, df: pd.DataFrame, dev_map: Dict[str, int], genre_map: Dict[str, int]):
+def load_games(db: Session, df: pd.DataFrame, dev_map: dict[str, int], genre_map: dict[str, int]):
     """Load games to database in batches, linking to developers and genres
     via direct association table inserts."""
     print(f"Loading {len(df)} games into the database...")
@@ -99,7 +98,7 @@ def _create_game_from_row(row) -> Game:
     )
 
 
-def _flush_batch(db: Session, batch_games: list, dev_map: Dict[str, int], genre_map: Dict[str, int]):
+def _flush_batch(db: Session, batch_games: list, dev_map: dict[str, int], genre_map: dict[str, int]):
     """Flush a batch of games and insert their associations."""
     db.flush()
 

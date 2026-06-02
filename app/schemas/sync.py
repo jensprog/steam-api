@@ -1,11 +1,10 @@
 # Pydantic schemas for validating and transforming game data from the Steam API appdetails endpoint.
 from pydantic import BaseModel, field_validator
-from typing import List, Optional
 
 
 class MovieData(BaseModel):
     thumbnail: str
-    hls_h264: Optional[str] = None
+    hls_h264: str | None = None
     name: str
 
 
@@ -13,15 +12,15 @@ class SteamAppData(BaseModel):
     app_id: str
     name: str
     price: float = 0.0
-    release_date: Optional[str] = None
-    type: Optional[str] = None
-    short_description: Optional[str] = None
+    release_date: str | None = None
+    type: str | None = None
+    short_description: str | None = None
     windows: bool = False
     mac: bool = False
     linux: bool = False
-    developers: List[str] = []
-    genres: List[str] = []
-    movies: Optional[List[MovieData]] = []
+    developers: list[str] = []
+    genres: list[str] = []
+    movies: list[MovieData] | None = None
 
     @field_validator("release_date", mode="before")
     @classmethod

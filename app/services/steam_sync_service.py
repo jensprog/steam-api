@@ -1,5 +1,4 @@
 # Fetches app list and game details from the Steam API and syncs them to the database.
-from typing import List
 import logging
 import requests
 import time
@@ -11,7 +10,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
-def get_app_list_from_steam_api(sync_repo: SyncRepositoryInterface) -> List[dict]:
+def get_app_list_from_steam_api(sync_repo: SyncRepositoryInterface) -> list[dict]:
     timestamp = sync_repo.get_last_sync_timestamp()
     params = {"key": settings.STEAM_API_KEY}
 

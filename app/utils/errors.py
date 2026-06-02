@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from typing import Any, Dict, Optional
+from typing import Any
 from app.schemas.error import ErrorResponse, ErrorCodes
 
 """
@@ -11,7 +11,7 @@ with proper status codes and error structures.
 
 
 def create_http_exception(
-    status_code: int, error_code: str, message: str, details: Optional[Dict[str, Any]] = None
+    status_code: int, error_code: str, message: str, details: dict[str, Any] | None = None
 ) -> HTTPException:
     """Helper function to create standardized HTTP exceptions."""
     error_response = ErrorResponse(error_code=error_code, message=message, details=details)

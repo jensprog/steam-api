@@ -1,4 +1,3 @@
-from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.repositories.interfaces.developer_repository import DeveloperRepositoryInterface
 from app.models.game import Game
@@ -17,10 +16,10 @@ class SQLAlchemyDeveloperRepository(DeveloperRepositoryInterface):
     def __init__(self, db: Session):
         self.db = db
 
-    def find_by_id(self, developer_id: int) -> Optional[Developer]:
+    def find_by_id(self, developer_id: int) -> Developer | None:
         return self.db.query(Developer).filter(Developer.id == developer_id).first()
 
-    def find_filtered(self, params: DeveloperQueryParameters) -> Tuple[List[Developer], int]:
+    def find_filtered(self, params: DeveloperQueryParameters) -> tuple[list[Developer], int]:
         query = self.db.query(Developer)
 
         if params.search:

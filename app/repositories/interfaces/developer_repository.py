@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
 from app.models.developer import Developer
 from app.schemas.developer import DeveloperQueryParameters
 
@@ -10,11 +9,11 @@ Provides complete decoupling from database implementation."""
 
 class DeveloperRepositoryInterface(ABC):
     @abstractmethod
-    def find_by_id(self, developer_id: int) -> Optional[Developer]:
+    def find_by_id(self, developer_id: int) -> Developer | None:
         """Find a developer by its ID"""
         pass
 
     @abstractmethod
-    def find_filtered(self, params: DeveloperQueryParameters) -> Tuple[List[Developer], int]:
+    def find_filtered(self, params: DeveloperQueryParameters) -> tuple[list[Developer], int]:
         """Find filtered developers"""
         pass

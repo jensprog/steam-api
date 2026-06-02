@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
 from app.models.game import Game
 from app.schemas.game import GameCreate, GameUpdate, GameQueryParameters
 
@@ -10,17 +9,17 @@ Provides complete decoupling from database implementation."""
 
 class GameRepositoryInterface(ABC):
     @abstractmethod
-    def find_by_id(self, game_id: int) -> Optional[Game]:
+    def find_by_id(self, game_id: int) -> Game | None:
         """Find a game by its ID"""
         pass
 
     @abstractmethod
-    def find_by_app_id(self, app_id: int) -> Optional[Game]:
+    def find_by_app_id(self, app_id: int) -> Game | None:
         """Find a game by its Steam app ID"""
         pass
 
     @abstractmethod
-    def find_filtered(self, params: GameQueryParameters) -> Tuple[List[Game], int]:
+    def find_filtered(self, params: GameQueryParameters) -> tuple[list[Game], int]:
         """Find filtered games and total count for pagination.
 
         Returns tuple of (games_list, total_count)
@@ -28,12 +27,12 @@ class GameRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def save(self, game_data: GameCreate, owner_id: Optional[int] = None) -> Game:
+    def save(self, game_data: GameCreate, owner_id: int | None = None) -> Game:
         """Save a new game"""
         pass
 
     @abstractmethod
-    def update(self, game_id: int, game_data: GameUpdate) -> Optional[Game]:
+    def update(self, game_id: int, game_data: GameUpdate) -> Game | None:
         """Update an existing game"""
         pass
 

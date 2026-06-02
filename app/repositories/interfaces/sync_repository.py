@@ -1,13 +1,12 @@
 # Abstract interface for sync repository, defining methods for managing sync state and upserting games.
 from abc import ABC, abstractmethod
-from typing import Optional, Set
 from datetime import datetime
 from app.schemas.sync import SteamAppData
 
 
 class SyncRepositoryInterface(ABC):
     @abstractmethod
-    def get_last_sync_timestamp(self) -> Optional[datetime]:
+    def get_last_sync_timestamp(self) -> datetime | None:
         pass
 
     @abstractmethod
@@ -19,13 +18,13 @@ class SyncRepositoryInterface(ABC):
         pass
 
     @abstractmethod
-    def get_all_app_ids(self) -> Set[int]:
+    def get_all_app_ids(self) -> set[int]:
         pass
 
     @abstractmethod
-    def get_gap_sync_checkpoint(self) -> Optional[int]:
+    def get_gap_sync_checkpoint(self) -> int | None:
         pass
 
     @abstractmethod
-    def set_gap_sync_checkpoint(self, app_id: Optional[int]) -> None:
+    def set_gap_sync_checkpoint(self, app_id: int | None) -> None:
         pass

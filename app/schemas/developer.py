@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List, Optional
 from app.schemas.game import PaginationResponse
 
 """
@@ -12,16 +11,16 @@ Defines read-only response models for developer endpoints.
 class DeveloperResponse(BaseModel):
     id: int
     name: str
-    links: List[dict] = []
+    links: list[dict] = []
 
     class Config:
         from_attributes = True
 
 
 class DeveloperQueryParameters(BaseModel):
-    game: Optional[str] = None
-    genre: Optional[str] = None
-    search: Optional[str] = None
+    game: str | None = None
+    genre: str | None = None
+    search: str | None = None
     page: int = 1
     limit: int = 20
 
@@ -30,7 +29,7 @@ class DeveloperQueryParameters(BaseModel):
 
 
 class DevelopersListResponse(BaseModel):
-    developers: List[DeveloperResponse]
+    developers: list[DeveloperResponse]
     pagination: PaginationResponse
     links: dict = {}
 
@@ -42,6 +41,6 @@ class DeveloperWithGameCount(BaseModel):
 
 
 class DevelopersWithGamesResponse(BaseModel):
-    developers: List[DeveloperWithGameCount]
+    developers: list[DeveloperWithGameCount]
     pagination: PaginationResponse
     links: dict = {}

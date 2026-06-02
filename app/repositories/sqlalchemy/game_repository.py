@@ -1,4 +1,3 @@
-from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.repositories.exceptions import ConstraintViolationError
@@ -21,13 +20,13 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
     def __init__(self, db: Session):
         self.db = db
 
-    def find_by_id(self, game_id: int) -> Optional[Game]:
+    def find_by_id(self, game_id: int) -> Game | None:
         return self.db.query(Game).filter(Game.id == game_id).first()
 
-    def find_by_app_id(self, app_id: int) -> Optional[Game]:
+    def find_by_app_id(self, app_id: int) -> Game | None:
         return self.db.query(Game).filter(Game.app_id == app_id).first()
 
-    def find_filtered(self, params: GameQueryParameters) -> Tuple[List[Game], int]:
+    def find_filtered(self, params: GameQueryParameters) -> tuple[list[Game], int]:
         query = self.db.query(Game)
 
         if params.developer:
@@ -42,7 +41,7 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
 
         return games, total_games
 
-    def save(self, game_data: GameCreate, owner_id: Optional[int] = None) -> Game:
+    def save(self, game_data: GameCreate, owner_id: int | None = None) -> Game:
         game_dict = game_data.model_dump()
         game_dict.pop("developers", None)
         game_dict.pop("genres", None)
@@ -75,7 +74,7 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
             self.db.rollback()
             raise ConstraintViolationError(f"Failed to create game - constraint violation: {str(e)}")
 
-    def update(self, game_id: int, game_data: GameUpdate) -> Optional[Game]:
+    def update(self, game_id: int, game_data: GameUpdate) -> Game | None:
         game = self.db.query(Game).filter(Game.id == game_id).first()
         if not game:
             return None

@@ -1,4 +1,3 @@
-from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.repositories.interfaces.genre_repository import GenreRepositoryInterface
 from app.models.game import Game
@@ -17,10 +16,10 @@ class SQLAlchemyGenreRepository(GenreRepositoryInterface):
     def __init__(self, db: Session):
         self.db = db
 
-    def find_by_id(self, genre_id: int) -> Optional[Genre]:
+    def find_by_id(self, genre_id: int) -> Genre | None:
         return self.db.query(Genre).filter(Genre.id == genre_id).first()
 
-    def find_filtered(self, params: GenreQueryParameters) -> Tuple[List[Genre], int]:
+    def find_filtered(self, params: GenreQueryParameters) -> tuple[list[Genre], int]:
         query = self.db.query(Genre)
 
         if params.game:
@@ -35,7 +34,7 @@ class SQLAlchemyGenreRepository(GenreRepositoryInterface):
 
         return genres, total_genres
 
-    def find_games_by_genre(self, genre_id: int, params: GenreQueryParameters) -> Tuple[List[Game], int]:
+    def find_games_by_genre(self, genre_id: int, params: GenreQueryParameters) -> tuple[list[Game], int]:
         games = self.db.query(Game).filter(Game.genres.any(id=genre_id))
 
         total_games = games.count()

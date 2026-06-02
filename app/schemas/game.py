@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List, Optional
 
 """
 Pydantic models for game-related API request/response schemas.
@@ -10,16 +9,16 @@ including creation, updates, responses, and query parameters.
 
 
 class GameCreate(BaseModel):
-    app_id: Optional[str] = None
+    app_id: str | None = None
     name: str
     price: float = 0.0
-    release_date: Optional[str] = None
-    short_description: Optional[str] = None
+    release_date: str | None = None
+    short_description: str | None = None
     windows: bool = False
     mac: bool = False
     linux: bool = False
-    developers: List[str] = []
-    genres: List[str] = []
+    developers: list[str] = []
+    genres: list[str] = []
 
 
 """ JSON structure for GET /games/{id} endpoint"""
@@ -29,8 +28,8 @@ class GameResponse(BaseModel):
     id: int
     name: str
     price: float
-    release_date: Optional[str] = None
-    short_description: Optional[str] = None
+    release_date: str | None = None
+    short_description: str | None = None
     metacritic_score: int
     positive: int
     negative: int
@@ -38,13 +37,13 @@ class GameResponse(BaseModel):
     mac: bool
     linux: bool
     average_playtime_forever: int
-    estimated_owners: Optional[str] = None
-    header_image: Optional[str] = None
+    estimated_owners: str | None = None
+    header_image: str | None = None
 
-    developers: List[str] = []
-    genres: List[str] = []
+    developers: list[str] = []
+    genres: list[str] = []
 
-    links: List[dict] = []
+    links: list[dict] = []
 
     class Config:
         from_attributes = True
@@ -66,9 +65,9 @@ class PaginationResponse(BaseModel):
 
 
 class GameQueryParameters(BaseModel):
-    developer: Optional[str] = None
-    genre: Optional[str] = None
-    search: Optional[str] = None
+    developer: str | None = None
+    genre: str | None = None
+    search: str | None = None
     page: int = 1
     limit: int = 20
 
@@ -77,7 +76,7 @@ class GameQueryParameters(BaseModel):
 
 
 class GamesListResponse(BaseModel):
-    games: List[GameResponse]
+    games: list[GameResponse]
     pagination: PaginationResponse
     links: dict
 
@@ -86,18 +85,18 @@ class GamesListResponse(BaseModel):
 
 
 class GameUpdate(BaseModel):
-    name: Optional[str] = None
-    price: Optional[float] = None
-    release_date: Optional[str] = None
-    short_description: Optional[str] = None
-    windows: Optional[bool] = None
-    mac: Optional[bool] = None
-    linux: Optional[bool] = None
-    developers: Optional[List[str]] = None
-    genres: Optional[List[str]] = None
-    metacritic_score: Optional[int] = None
-    positive: Optional[int] = None
-    negative: Optional[int] = None
+    name: str | None = None
+    price: float | None = None
+    release_date: str | None = None
+    short_description: str | None = None
+    windows: bool | None = None
+    mac: bool | None = None
+    linux: bool | None = None
+    developers: list[str] | None = None
+    genres: list[str] | None = None
+    metacritic_score: int | None = None
+    positive: int | None = None
+    negative: int | None = None
 
 
 class RankingEntry(BaseModel):
@@ -105,11 +104,11 @@ class RankingEntry(BaseModel):
     concurrent_in_game: int
     peak_in_game: int
     name: str
-    header_image: Optional[str] = None
+    header_image: str | None = None
 
 
 class RankingsListResponse(BaseModel):
-    rankings: List[RankingEntry]
+    rankings: list[RankingEntry]
     pagination: PaginationResponse
     links: dict
 
