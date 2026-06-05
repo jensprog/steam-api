@@ -22,6 +22,23 @@ class SteamAppData(BaseModel):
     genres: list[str] = []
     header_image: str | None = None
     movies: list[MovieData] | None = None
+    background: str | None = None
+    recommendations: int | None = None
+    screenshots: list[str] = []
+
+    @field_validator("recommendations", mode="before")
+    @classmethod
+    def parse_recommendations(cls, v):
+        if isinstance(v, dict):
+            return v.get("total")
+        return v
+
+    @field_validator("screenshots", mode="before")
+    @classmethod
+    def parse_screenshots(cls, v):
+        if isinstance(v, list) and v and isinstance(v[0], dict):
+            return [s.get("path_full", "") for s in v]
+        return v
 
     @field_validator("release_date", mode="before")
     @classmethod

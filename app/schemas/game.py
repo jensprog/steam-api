@@ -39,6 +39,10 @@ class GameResponse(BaseModel):
     average_playtime_forever: int
     estimated_owners: str | None = None
     header_image: str | None = None
+    movies: list[dict] | None = None
+    background: str | None = None
+    recommendations: int | None = None
+    screenshots: list[str] | None = None
 
     developers: list[str] = []
     genres: list[str] = []

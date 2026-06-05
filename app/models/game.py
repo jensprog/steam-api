@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, Text, Table, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
+from sqlalchemy.dialects.postgresql import JSONB
 from app.database import Base
 
 """
@@ -43,6 +44,10 @@ class Game(Base):
     average_playtime_forever = Column(Integer, default=0)
     estimated_owners = Column(String)
     header_image = Column(String)
+    background = Column(String)
+    recommendations = Column(Integer)
+    movies = Column(JSONB, default=list)
+    screenshots = Column(JSONB, default=list)
     owner_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
 
     developers = relationship("Developer", secondary=game_developers, back_populates="games")
