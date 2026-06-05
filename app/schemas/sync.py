@@ -20,6 +20,7 @@ class SteamAppData(BaseModel):
     linux: bool = False
     developers: list[str] = []
     genres: list[str] = []
+    header_image: str | None = None
     movies: list[MovieData] | None = None
 
     @field_validator("release_date", mode="before")
