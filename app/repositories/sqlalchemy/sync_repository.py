@@ -50,39 +50,44 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
         self.db.commit()
 
     def upsert_game(self, game_data: SteamAppData) -> None:
-        game_dict = game_data.model_dump()
-        game_dict.pop("developers", None)
-        game_dict.pop("genres", None)
-        game_dict.pop("movies", None)
+        try:
+            game_dict = game_data.model_dump()
+            game_dict.pop("developers", None)
+            game_dict.pop("genres", None)
+            game_dict.pop("movies", None)
 
-        existing_game = self.db.query(Game).filter(Game.app_id == game_data.app_id).first()
+            existing_game = self.db.query(Game).filter(Game.app_id == game_data.app_id).first()
 
-        if existing_game is not None:
-            for key, value in game_dict.items():
-                setattr(existing_game, key, value)
-        else:
-            new_game = Game(**game_dict)
-            self.db.add(new_game)
+            if existing_game is not None:
+                for key, value in game_dict.items():
+                    setattr(existing_game, key, value)
+            else:
+                new_game = Game(**game_dict)
+                self.db.add(new_game)
 
-        game = existing_game if existing_game is not None else new_game
+            game = existing_game if existing_game is not None else new_game
 
-        if game_data.developers is not None:
-            game.developers.clear()
-            for name in game_data.developers:
-                dev = self.db.query(Developer).filter(Developer.name == name).first()
-                if not dev:
-                    dev = Developer(name=name)
-                    self.db.add(dev)
-                    self.db.flush()
-                game.developers.append(dev)
+            if game_data.developers is not None:
+                game.developers.clear()
+                self.db.flush()
+                for name in game_data.developers:
+                    dev = self.db.query(Developer).filter(Developer.name == name).first()
+                    if not dev:
+                        dev = Developer(name=name)
+                        self.db.add(dev)
+                        self.db.flush()
+                    game.developers.append(dev)
 
-        if game_data.genres is not None:
-            game.genres.clear()
-            for name in game_data.genres:
-                genre = self.db.query(Genre).filter(Genre.name == name).first()
-                if not genre:
-                    genre = Genre(name=name)
-                    self.db.add(genre)
-                    self.db.flush()
-                game.genres.append(genre)
-        self.db.commit()
+            if game_data.genres is not None:
+                game.genres.clear()
+                for name in game_data.genres:
+                    genre = self.db.query(Genre).filter(Genre.name == name).first()
+                    if not genre:
+                        genre = Genre(name=name)
+                        self.db.add(genre)
+                        self.db.flush()
+                    game.genres.append(genre)
+            self.db.commit()
+        except Exception:
+            self.db.rollback()
+            raise
