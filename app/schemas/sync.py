@@ -26,6 +26,16 @@ class SteamAppData(BaseModel):
     recommendations: int | None = None
     screenshots: list[str] = []
 
+    @field_validator("platforms", mode="before")
+    @classmethod
+    def parse_platforms(cls, v):
+        if isinstance(v, dict) and "platforms" in v:
+            platforms = v.get("platforms", {})
+            v["windows"] = platforms.get("windows", False)
+            v["mac"] = platforms.get("mac", False)
+            v["linux"] = platforms.get("linux", False)
+        return v
+
     @field_validator("recommendations", mode="before")
     @classmethod
     def parse_recommendations(cls, v):

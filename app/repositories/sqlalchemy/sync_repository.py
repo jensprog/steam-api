@@ -14,6 +14,7 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
     def __init__(self, db: Session):
         self.db = db
 
+    # Returns the timestamp of the last completed sync, or None if no sync has run yet.
     def get_last_sync_timestamp(self) -> datetime | None:
         query = self.db.query(SyncState).first()
 
@@ -22,6 +23,7 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
         else:
             return query.last_sync_timestamp
 
+    # Updates the last sync timestamp, or creates the sync state row if it does not exist.
     def update_last_sync_timestamp(self, timestamp: datetime) -> None:
         query = self.db.query(SyncState).first()
 
@@ -33,14 +35,17 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
 
         self.db.commit()
 
+    # Returns all app IDs currently stored in the database.
     def get_all_app_ids(self) -> set[int]:
         rows = self.db.query(Game.app_id).all()
         return {row[0] for row in rows}
 
+    # Returns the last processed app ID from a gap sync, used to resume if interrupted.
     def get_gap_sync_checkpoint(self) -> int | None:
         state = self.db.query(SyncState).first()
         return state.gap_sync_checkpoint if state is not None else None
 
+    # Saves the current gap sync checkpoint, or clears it by passing None when sync is complete.
     def set_gap_sync_checkpoint(self, app_id: int | None) -> None:
         state = self.db.query(SyncState).first()
         if state is not None:
@@ -49,6 +54,7 @@ class SQLAlchemySyncRepository(SyncRepositoryInterface):
             self.db.add(SyncState(gap_sync_checkpoint=app_id))
         self.db.commit()
 
+    # Updates existing game if any updates have occurred, if game does not exist in db, insert game.
     def upsert_game(self, game_data: SteamAppData) -> None:
         try:
             game_dict = game_data.model_dump()

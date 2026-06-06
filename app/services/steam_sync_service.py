@@ -10,6 +10,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 
+# Fetches the list of apps from Steam API, filtered by last sync timestamp if available.
 def get_app_list_from_steam_api(sync_repo: SyncRepositoryInterface) -> list[dict]:
     timestamp = sync_repo.get_last_sync_timestamp()
     params = {"key": settings.STEAM_API_KEY}
@@ -23,6 +24,7 @@ def get_app_list_from_steam_api(sync_repo: SyncRepositoryInterface) -> list[dict
     return data.get("response", {}).get("apps", [])
 
 
+# Fetches detailed game data from the Steam Store API for a given app ID.
 def get_app_details(app_id):
     response = requests.get("https://store.steampowered.com/api/appdetails", params={"appids": app_id})
     data = response.json()
@@ -33,6 +35,7 @@ def get_app_details(app_id):
     return data.get(str(app_id), {}).get("data")
 
 
+# Syncs games updated since the last sync timestamp and updates the timestamp when done.
 def sync_games(sync_repo: SyncRepositoryInterface) -> None:
     data = get_app_list_from_steam_api(sync_repo)
 
@@ -55,6 +58,7 @@ def sync_games(sync_repo: SyncRepositoryInterface) -> None:
     sync_repo.update_last_sync_timestamp(datetime.now())
 
 
+# Fetches all Steam app IDs and syncs games missing from the database, resumable via checkpoint.
 def gap_sync(sync_repo: SyncRepositoryInterface) -> None:
     response = requests.get(
         "https://api.steampowered.com/IStoreService/GetAppList/v1/",
