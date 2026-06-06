@@ -1,5 +1,5 @@
 # Pydantic schemas for validating and transforming game data from the Steam API appdetails endpoint.
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 
 
 class MovieData(BaseModel):
@@ -26,7 +26,7 @@ class SteamAppData(BaseModel):
     recommendations: int | None = None
     screenshots: list[str] = []
 
-    @field_validator("platforms", mode="before")
+    @model_validator(mode="before")
     @classmethod
     def parse_platforms(cls, v):
         if isinstance(v, dict) and "platforms" in v:
