@@ -26,6 +26,9 @@ class SQLAlchemyGameRepository(GameRepositoryInterface):
     def find_by_app_id(self, app_id: int) -> Game | None:
         return self.db.query(Game).filter(Game.app_id == app_id).first()
 
+    def find_by_app_ids(self, app_ids: list[int]) -> list[Game]:
+        return self.db.query(Game).filter(Game.app_id.in_(app_ids)).all()
+
     def find_filtered(self, params: GameQueryParameters) -> tuple[list[Game], int]:
         query = self.db.query(Game)
 

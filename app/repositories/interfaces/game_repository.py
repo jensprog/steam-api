@@ -19,6 +19,11 @@ class GameRepositoryInterface(ABC):
         pass
 
     @abstractmethod
+    def find_by_app_ids(self, app_ids: list[int]) -> list[Game]:
+        """Find multiple games by their Steam app IDs in a single query"""
+        pass
+
+    @abstractmethod
     def find_filtered(self, params: GameQueryParameters) -> tuple[list[Game], int]:
         """Find filtered games and total count for pagination.
 
