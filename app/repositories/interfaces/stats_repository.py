@@ -8,13 +8,13 @@ Returns raw data for aggregations and filtering - business logic layer handles s
 
 class StatsRepositoryInterface(ABC):
     @abstractmethod
-    def get_games_with_price(self) -> list[Any]:
-        """Get all games with their prices"""
+    def get_price_distribution(self) -> list[tuple[str, int]]:
+        """Get game count per price bucket, aggregated in the database"""
         pass
 
     @abstractmethod
-    def get_games_with_owners(self) -> list[Any]:
-        """Get all games with their estimated owners"""
+    def get_owners_distribution(self) -> list[tuple[str, int]]:
+        """Get game count per estimated-owners bucket, aggregated in the database"""
         pass
 
     @abstractmethod
