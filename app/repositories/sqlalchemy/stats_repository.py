@@ -38,7 +38,7 @@ class SQLAlchemyStatsRepository(StatsRepositoryInterface):
                 func.sum(case(((lower >= 200000) & (lower < 1000000), 1), else_=0)).label("between_200k_1m"),
                 func.sum(case((lower >= 1000000, 1), else_=0)).label("over_1m"),
             )
-            .filter(Game.estimated_owners != None)
+            .filter(Game.estimated_owners is not None)
             .one()
         )  # noqa: E711
         return [
