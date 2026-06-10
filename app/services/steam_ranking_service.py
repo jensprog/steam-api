@@ -37,6 +37,16 @@ def get_all_ranks(game_repo: GameRepositoryInterface, params: RankQueryParameter
     return RankingsListResponse(rankings=paginated, pagination=pagination, links=links)
 
 
+def concurrent_in_game():
+    total_players_in_game = _get_steam_ranks()
+    count = 0
+
+    for entry in total_players_in_game:
+        count += entry["concurrent_in_game"]
+
+    return count
+
+
 def _fetch_all_ranks(game_repo: GameRepositoryInterface):
     raw_ranks = _get_steam_ranks()
 
